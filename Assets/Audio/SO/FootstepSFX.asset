@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a8b4861b54fc7b469862c20049ba038, type: 3}
+  m_Name: FootstepSFX
+  m_EditorClassIdentifier: Assembly-CSharp::FootstepAudioEvent
+  clip: {fileID: 0}
+  volume: 1
+  pitch: 1
+  loop: 0
+  surfaceSounds:
+  - surface: 0
+    clips:
+    - {fileID: 8300000, guid: c681edc2ae42c1544807ae4244d42f21, type: 3}
+    - {fileID: 8300000, guid: ffdcb518f5a994248a6b4f88dce05b49, type: 3}
+    - {fileID: 8300000, guid: 9f75542d59cbbb8468737df8b7748cf3, type: 3}
+    - {fileID: 8300000, guid: 972836877f917474993e25b17a4c4193, type: 3}
+    - {fileID: 8300000, guid: aab4b037908d8af45b9fbcac3b81f0ec, type: 3}
+  - surface: 2
+    clips:
+    - {fileID: 8300000, guid: da25b12de28da5a4f8efd46897f52849, type: 3}
+    - {fileID: 8300000, guid: a7748229ddb03644eb50340ee180fc28, type: 3}
+    - {fileID: 8300000, guid: 41e594d4a372eed40a473302103092d2, type: 3}
+    - {fileID: 8300000, guid: 3b8ae6caa5886e94d8e9f547e47d098d, type: 3}
+    - {fileID: 8300000, guid: cbe97d97c687b074699cc405d9bc7d83, type: 3}
+  minStepDelay: 0.706
+  maxStepDelay: 0.862
+  pitchVariation: 0.1
+  volumeVariation: 0.1
