@@ -1,0 +1,106 @@
+# ===========================================
+# Unity .gitignore (Optimized & Organized)
+# Updated 2025 — Based on official GitHub template
+# ===========================================
+
+# --- Unity Generated Folders ---
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+MemoryCaptures/
+Recordings/
+sysinfo.txt
+mono_crash.*
+
+# --- Visual Scripting (Bolt) Auto-Generated Files ---
+[Aa]ssets/Unity.VisualScripting.Generated/
+[Aa]ssets/Unity.VisualScripting.Generated.meta
+
+# --- Build Outputs ---
+*.apk
+*.aab
+*.unitypackage
+*.unitypackage.meta
+*.app
+
+# --- Addressables & StreamingAssets ---
+[Aa]ssets/StreamingAssets/aa*
+[Aa]ssets/Addressables_Temp*
+[Aa]ssets/AddressableAssetsData/*/*.bin*
+[Aa]ssets/AddressableAssetsData/link.xml*
+ServerData/
+
+# --- Blender (Unity supports direct imports) ---
+*.blend1
+*.blend1.meta
+
+# --- IDE / Editor Files ---
+.vs/
+.vscode/
+.gradle/
+.idea/
+.consulo/
+ExportedObj/
+
+# JetBrains Rider plugin and settings
+[Aa]ssets/Plugins/Editor/JetBrains*
+*.DotSettings.user
+
+# --- Solution / Project Files ---
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# --- Unity Generated Meta Files ---
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Keep meta files for tracked assets
+!*.meta
+
+# --- Logs ---
+*.log
+
+# --- Crashlytics ---
+crashlytics-build.properties
+
+# --- Test Runner Generated ---
+[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# --- Asset Store Tools (optional) ---
+# Uncomment to ignore if not used
+# [Aa]ssets/AssetStoreTools*
+
+# --- Plastic SCM / Collaborate (optional) ---
+# Uncomment if using Plastic SCM or Unity Collaborate
+# /.plastic/
+# /[Pp]lasticSCM/
+
+# --- Cache & Temporary Exports ---
+[Bb]uildCache/
+[Ll]ibrary/ShaderCache/
+TempShaderCache/
+ExportedObj/
+
+# --- Misc ---
+*.bak
+*.orig
+*.swp
+.DS_Store
+Thumbs.db
