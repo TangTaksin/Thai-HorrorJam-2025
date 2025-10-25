@@ -86,39 +86,37 @@ public class SignPainter : MonoBehaviour
         }
     }
 
-    // นี่คือหัวใจหลักของการวาด
-    void DrawOnTexture(Vector2 uvCoordinate)
+    // ฟังก์ชันสำหรับให้ Script อื่นมาดึง Texture ที่วาดได้
+    public Texture2D GetDrawableTexture()
     {
-        // 1. แปลง UV (0.0 - 1.0) เป็นพิกัด Pixel (เช่น 0 - 512)
+        return drawableTexture;
+    }
+
+
+
+    // นี่คือหัวใจหลักของการวาด
+    // (สำคัญ!) เปลี่ยนจาก private (ไม่มีอะไรนำหน้า) เป็น public
+    // เพื่อให้ ShowDrawing เรียกใช้ได้
+    public void DrawOnTexture(Vector2 uvCoordinate)
+    {
+        if (drawableTexture == null) return; // (เพิ่ม) เช็กเผื่อไว้
+
         int pixelX = (int)(uvCoordinate.x * drawableTexture.width);
         int pixelY = (int)(uvCoordinate.y * drawableTexture.height);
-
-        // 2. วนลูปเป็นสี่เหลี่ยมรอบจุดที่ชน เพื่อสร้าง "ขนาดแปรง"
         for (int y = -brushSize / 2; y <= brushSize / 2; y++)
         {
             for (int x = -brushSize / 2; x <= brushSize / 2; x++)
             {
-                // (Optional) ทำให้แปรงเป็นวงกลมแทนสี่เหลี่ยม
-                if (new Vector2(x, y).magnitude > brushSize / 2)
-                {
-                    continue; // ข้าม pixel ที่อยู่นอกวงกลม
-                }
-
+                if (new Vector2(x, y).magnitude > brushSize / 2) continue;
                 int targetX = pixelX + x;
                 int targetY = pixelY + y;
-
-                // 3. ตรวจสอบว่าพิกัดไม่ออกนอกขอบ Texture
                 if (targetX >= 0 && targetX < drawableTexture.width &&
                     targetY >= 0 && targetY < drawableTexture.height)
                 {
-                    // 4. ตั้งค่าสี Pixel
                     drawableTexture.SetPixel(targetX, targetY, paintColor);
                 }
             }
         }
-
-        // 5. ตั้งค่า Flag ว่า Texture นี้ต้องอัปเดต
-        // เราจะไม่ Apply() ที่นี่ เพราะมันช้ามากถ้าทำทุก Pixel
         textureNeedsUpdate = true;
     }
 }
