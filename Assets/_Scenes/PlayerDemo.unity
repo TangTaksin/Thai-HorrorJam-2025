@@ -906,7 +906,7 @@ MonoBehaviour:
   paintableLayer:
     serializedVersion: 2
     m_Bits: 256
-  brushColor: {r: 1, g: 0, b: 0, a: 1}
+  brushColor: {r: 0, g: 0, b: 0, a: 1}
   brushSize: 0.05
   strokeSteps: 8
   maxUndoSteps: 10
