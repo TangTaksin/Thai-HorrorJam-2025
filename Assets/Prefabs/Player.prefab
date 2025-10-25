@@ -60,9 +60,9 @@ Transform:
   m_GameObject: {fileID: 1624924940674117196}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.07, y: -1.22, z: -0.06}
-  m_LocalScale: {x: 1.41, y: 1.41, z: 1.41}
-  m_ConstrainProportionsScale: 1
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1.2, y: 1, z: 1.2}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 479585692081257618}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -149,8 +149,8 @@ Transform:
   m_GameObject: {fileID: 3773585622249064787}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.114, y: -3.93, z: -0.086}
-  m_LocalScale: {x: 1, y: 2.56, z: 1}
+  m_LocalPosition: {x: 0, y: -1.8132154, z: 0.00000007095791}
+  m_LocalScale: {x: 1, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 479585692081257618}
@@ -642,7 +642,7 @@ MonoBehaviour:
   lookSensitivity: 0.8
   lookSmoothing: 8
   smoothLook: 1
-  verticalLookLimit: 70
+  verticalLookLimit: 60
   handFollowSpeed: 6
   flashlightFollowSpeed: 3
   shakeAmplitude: 0.18
@@ -994,10 +994,10 @@ Light:
   serializedVersion: 11
   m_Type: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 67.19
+  m_Intensity: 50
   m_Range: 15
-  m_SpotAngle: 81.84925
-  m_InnerSpotAngle: 50.740116
+  m_SpotAngle: 68.64242
+  m_InnerSpotAngle: 37.533287
   m_CookieSize: 10
   m_Shadows:
     m_Type: 2
@@ -1006,7 +1006,7 @@ Light:
     m_Strength: 1
     m_Bias: 0.05
     m_NormalBias: 0.4
-    m_NearPlane: 0.35808456
+    m_NearPlane: 0.1
     m_CullingMatrixOverride:
       e00: 1
       e01: 0
@@ -1089,9 +1089,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c8bca95f7c947b4db5fb152a0d693d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: com.cqf.urpvolumetricfog.runtime::VolumetricAdditionalLight
-  anisotropy: 0.25
-  scattering: 1
-  radius: 0.2
+  anisotropy: 0.1
+  scattering: 0.09
+  radius: 0.15
 --- !u!1 &7316923102811559390
 GameObject:
   m_ObjectHideFlags: 0
@@ -1279,8 +1279,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9008000581178230078}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0.9, y: 0, z: 1.2}
+  m_LocalRotation: {x: 0.6786134, y: -0.05493849, z: 0.051025193, w: 0.73065865}
+  m_LocalPosition: {x: 0.9, y: -0.04, z: 1.16}
   m_LocalScale: {x: 0.21, y: 0.055150673, z: 0.21}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1288,7 +1288,7 @@ Transform:
   - {fileID: 5895411203554557366}
   - {fileID: 3782373429280984016}
   m_Father: {fileID: 1560865235012768377}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 85.77, y: -8.6, z: 0}
 --- !u!114 &3779508635517320529
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1324,7 +1324,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Flashlight
   flashlight: {fileID: 4064832187906143204}
   minIntensity: 5
-  maxIntensity: 67
+  maxIntensity: 50
   enableFlicker: 0
   flickerChance: 0.02
   flickerDuration: 0.1
