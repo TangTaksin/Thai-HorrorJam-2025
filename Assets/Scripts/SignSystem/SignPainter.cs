@@ -1,17 +1,54 @@
 using UnityEngine;
 
+public enum BrushType
+{
+    Circle,      // แปรงกลมปกติ
+    Square,      // แปรงสี่เหลี่ยม
+    Soft,        // แปรงนุ่ม (Soft Falloff)
+    Hard,        // แปรงแหลม (Hard Edge)
+    Spray,       // แปรงสเปรย์
+}
+
 public class SignPainter : MonoBehaviour, IInteractable
 {
     [Header("Brush Settings")]
+    public BrushType brushType = BrushType.Circle;
     public int brushSize = 10;
     public Color paintColor = Color.black;
+    
+    [Header("Spray Settings")]
+    [Range(0.1f, 1f)]
+    [Tooltip("ความหนาแน่นของ Spray (0.1 = เบา, 1 = หนา)")]
+    public float sprayDensity = 0.5f;
+    
+    [Header("Soft Brush Settings")]
+    [Range(0.1f, 3f)]
+    [Tooltip("ความนุ่มของแปรง (ยิ่งสูง ยิ่งนุ่ม)")]
+    public float softnessFactor = 1.5f;
+
     private Texture2D drawableTexture;
     private bool textureNeedsUpdate = false;
     private Vector2 lastDrawUV;
     private bool isDrawingLastFrame = false;
     private Material drawableMaterial;
+    private System.Random sprayRandom;
 
     void Start()
+    {
+        sprayRandom = new System.Random();
+        InitializeTexture();
+    }
+
+    void LateUpdate()
+    {
+        if (textureNeedsUpdate)
+        {
+            drawableTexture.Apply();
+            textureNeedsUpdate = false;
+        }
+    }
+
+    private void InitializeTexture()
     {
         Renderer rend = GetComponent<Renderer>();
         if (rend == null)
@@ -40,15 +77,6 @@ public class SignPainter : MonoBehaviour, IInteractable
         RenderTexture.ReleaseTemporary(rt);
 
         drawableMaterial.mainTexture = drawableTexture;
-    }
-
-    void LateUpdate()
-    {
-        if (textureNeedsUpdate)
-        {
-            drawableTexture.Apply();
-            textureNeedsUpdate = false;
-        }
     }
 
     public void ExternalPaint(Vector2 rawUV)
@@ -126,27 +154,127 @@ public class SignPainter : MonoBehaviour, IInteractable
         {
             for (int x = -intRadius; x <= intRadius; x++)
             {
-                float distance = new Vector2(x, y).magnitude;
-                if (distance > brushRadius) continue;
-
                 int targetX = pixelX + x;
                 int targetY = pixelY + y;
 
-                if (targetX >= 0 && targetX < drawableTexture.width && targetY >= 0 && targetY < drawableTexture.height)
-                {
-                    float falloff = distance / brushRadius;
-                    float strength = Mathf.SmoothStep(1.0f, 0.0f, falloff);
+                if (targetX < 0 || targetX >= drawableTexture.width || 
+                    targetY < 0 || targetY >= drawableTexture.height)
+                    continue;
 
-                    Color originalColor = drawableTexture.GetPixel(targetX, targetY);
-                    float blendAlpha = strength * paintColor.a;
-                    Color blendedColor = Color.Lerp(originalColor, paintColor, blendAlpha);
+                float strength = CalculateBrushStrength(x, y, brushRadius);
+                
+                if (strength <= 0) continue;
 
-                    drawableTexture.SetPixel(targetX, targetY, blendedColor);
-                }
+                Color originalColor = drawableTexture.GetPixel(targetX, targetY);
+                float blendAlpha = strength * paintColor.a;
+                Color blendedColor = Color.Lerp(originalColor, paintColor, blendAlpha);
+
+                drawableTexture.SetPixel(targetX, targetY, blendedColor);
             }
         }
 
         textureNeedsUpdate = true;
     }
 
+    private float CalculateBrushStrength(int x, int y, float brushRadius)
+    {
+        float distance = new Vector2(x, y).magnitude;
+
+        switch (brushType)
+        {
+            case BrushType.Circle:
+                return CalculateCircleBrush(distance, brushRadius);
+
+            case BrushType.Square:
+                return CalculateSquareBrush(x, y, brushRadius);
+
+            case BrushType.Soft:
+                return CalculateSoftBrush(distance, brushRadius);
+
+            case BrushType.Hard:
+                return CalculateHardBrush(distance, brushRadius);
+
+            case BrushType.Spray:
+                return CalculateSprayBrush(distance, brushRadius);
+
+            default:
+                return CalculateCircleBrush(distance, brushRadius);
+        }
+    }
+
+    private float CalculateCircleBrush(float distance, float brushRadius)
+    {
+        if (distance > brushRadius) return 0f;
+        
+        float falloff = distance / brushRadius;
+        return Mathf.SmoothStep(1.0f, 0.0f, falloff);
+    }
+
+    private float CalculateSquareBrush(int x, int y, float brushRadius)
+    {
+        float maxDist = Mathf.Max(Mathf.Abs(x), Mathf.Abs(y));
+        if (maxDist > brushRadius) return 0f;
+        
+        float falloff = maxDist / brushRadius;
+        return Mathf.SmoothStep(1.0f, 0.0f, falloff);
+    }
+
+    private float CalculateSoftBrush(float distance, float brushRadius)
+    {
+        if (distance > brushRadius) return 0f;
+        
+        float normalizedDist = distance / brushRadius;
+        float strength = Mathf.Pow(1.0f - normalizedDist, softnessFactor);
+        return Mathf.Clamp01(strength);
+    }
+
+    private float CalculateHardBrush(float distance, float brushRadius)
+    {
+        if (distance > brushRadius) return 0f;
+        
+        float edgeSize = brushRadius * 0.2f;
+        if (distance < brushRadius - edgeSize)
+            return 1.0f;
+        
+        float edgeFalloff = (brushRadius - distance) / edgeSize;
+        return Mathf.Clamp01(edgeFalloff);
+    }
+
+    private float CalculateSprayBrush(float distance, float brushRadius)
+    {
+        if (distance > brushRadius) return 0f;
+        
+        float randomValue = (float)sprayRandom.NextDouble();
+        if (randomValue > sprayDensity) return 0f;
+        
+        float falloff = distance / brushRadius;
+        float baseStrength = 1.0f - falloff;
+        return baseStrength * randomValue * 0.5f;
+    }
+
+    // ฟังก์ชันเพิ่มเติมสำหรับเปลี่ยน Brush แบบ Runtime
+    public void SetBrushType(BrushType type)
+    {
+        brushType = type;
+    }
+
+    public void SetBrushSize(int size)
+    {
+        brushSize = Mathf.Max(1, size);
+    }
+
+    public void SetPaintColor(Color color)
+    {
+        paintColor = color;
+    }
+
+    public void SetSprayDensity(float density)
+    {
+        sprayDensity = Mathf.Clamp01(density);
+    }
+
+    public void SetSoftnessFactor(float softness)
+    {
+        softnessFactor = Mathf.Clamp(softness, 0.1f, 3f);
+    }
 }
