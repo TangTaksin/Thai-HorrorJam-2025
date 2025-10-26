@@ -56,15 +56,22 @@ public class FPCameraFlashlight : MonoBehaviour
     private void Update()
     {
         Vector2 lookInput = controls.Player.Look.ReadValue<Vector2>();
-        
-        if (HasSignificantInput(lookInput))
+        bool isHoldingClick = controls.Player.Draw.IsPressed();
+
+        if (HasSignificantInput(lookInput) && !isHoldingClick)
         {
             ApplyLookRotation(lookInput);
         }
-        else
+        else if (!isHoldingClick)
         {
             ReturnToCenter();
         }
+        else
+        {
+            // When holding click, do not change rotation
+            ReturnToCenter();
+        }
+
 
         ApplyFinalRotation();
     }
@@ -81,7 +88,7 @@ public class FPCameraFlashlight : MonoBehaviour
         float mouseY = input.y * sensY * deltaTime;
 
         currentYaw = Mathf.Clamp(currentYaw + mouseX, -maxLeftRot, maxRightRot);
-        
+
         float pitchDelta = invertY ? -mouseY : mouseY;
         currentPitch = Mathf.Clamp(currentPitch + pitchDelta, -maxDownRot, maxUpRot);
     }

@@ -6,6 +6,10 @@ public class SignPainter : MonoBehaviour
     public int brushSize = 10; // ขนาดแปรง (pixel)
     public Color paintColor = Color.black; // สีที่จะวาด
 
+    [Header("Interaction Settings")]
+    [Tooltip("ระยะห่างสูงสุดที่ผู้เล่นสามารถวาดบนป้ายได้ (เมตร)")]
+    public float maxDrawDistance = 5f;
+
     private Camera playerCamera;
     private Texture2D drawableTexture;
     private bool textureNeedsUpdate = false; // Flag สำหรับ Optimize
@@ -65,7 +69,7 @@ public class SignPainter : MonoBehaviour
             // ยิง Raycast จากตำแหน่งเมาส์
             Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
 
-            if (Physics.Raycast(ray, out RaycastHit hit))
+            if (Physics.Raycast(ray, out RaycastHit hit, maxDrawDistance))
             {
                 // ตรวจสอบว่า Raycast ชนกับ Object ที่มี Script นี้อยู่หรือไม่
                 if (hit.collider == GetComponent<Collider>())
@@ -242,4 +246,38 @@ public class SignPainter : MonoBehaviour
 
         textureNeedsUpdate = true;
     }
+
+    // --- (วาง Method นี้เพิ่มเข้าไปในคลาส SignPainter) ---
+    private void OnDrawGizmosSelected()
+    {
+        // 1. หา Camera
+        // เราต้องหา camera ใหม่ใน Gizmos เพราะ playerCamera ถูกตั้งค่าใน Start()
+        // ซึ่ง Gizmos อาจจะทำงานก่อน Start() (ตอนอยู่ใน Editor)
+        Camera cam = playerCamera; // ลองใช้ตัวที่ cache ไว้
+        if (cam == null)
+        {
+            cam = Camera.main; // ถ้าไม่มี ให้หาใหม่
+        }
+
+        // ถ้าหาไม่เจอจริงๆ (เช่น ยังไม่มีกล้อง) ก็ออก
+        if (cam == null)
+        {
+            Debug.LogWarning("SignPainter Gizmo: ไม่พบ Main Camera.");
+            return;
+        }
+
+        // 2. ตั้งค่าตำแหน่งและทิศทาง
+        // วาดจาก "กลางจอ" ของกล้อง
+        Vector3 rayOrigin = cam.transform.position;
+        Vector3 rayDirection = cam.transform.forward;
+
+        // 3. วาดเส้น Raycast (สีฟ้า)
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawRay(rayOrigin, rayDirection * maxDrawDistance);
+
+        // 4. วาด "จุด" ที่ปลายเส้น (สีแดง)
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(rayOrigin + (rayDirection * maxDrawDistance), 0.1f); // วาดวงกลมเล็กๆ ที่ปลาย
+    }
+    // --- (สิ้นสุดส่วนที่เพิ่ม) ---
 }
