@@ -5,9 +5,12 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/_Scenes/PlayerDemo.unity
     guid: 102aa329f547266448ac950780579e17
+  - enabled: 1
+    path: Assets/_Scenes/TerrainDemo.unity
+    guid: 975c10e76885b694ab5c35a001635370
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
