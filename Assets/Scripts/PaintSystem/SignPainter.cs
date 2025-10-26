@@ -16,6 +16,10 @@ public class SignPainter : MonoBehaviour, IInteractable
     private Vector2 lastDrawUV;
     private bool isDrawingLastFrame = false;
 
+    // --- (FIX 1) ---
+    // เราต้องเก็บ Material ที่เราจะวาดไว้
+    private Material drawableMaterial;
+
     void Start()
     {
         Renderer rend = GetComponent<Renderer>();
@@ -26,7 +30,12 @@ public class SignPainter : MonoBehaviour, IInteractable
             return;
         }
 
-        Texture originalTexture = rend.material.mainTexture;
+        // --- (FIX 2) ---
+        // เก็บ instance ของ material เพื่อที่เราจะเข้าถึง Tiling/Offset ได้
+        // (การใช้ .material จะสร้าง instance ใหม่ ทำให้ไม่กระทบกับ material หลัก)
+        drawableMaterial = rend.material; 
+
+        Texture originalTexture = drawableMaterial.mainTexture; // (ใช้ตัวแปรที่เก็บไว้)
         if (originalTexture == null)
         {
             Debug.LogError("SignPainter: Material does not have a Main Texture (Base Map).");
@@ -48,7 +57,7 @@ public class SignPainter : MonoBehaviour, IInteractable
         RenderTexture.ReleaseTemporary(rt);
 
         // Assign the new drawable texture to the material
-        rend.material.mainTexture = drawableTexture;
+        drawableMaterial.mainTexture = drawableTexture; // (ใช้ตัวแปรที่เก็บไว้)
     }
 
     // Apply texture changes at the end of the frame
@@ -67,9 +76,28 @@ public class SignPainter : MonoBehaviour, IInteractable
     /// Called by an external script (like FPInteract) to paint at a specific UV coordinate.
     /// This is triggered when the interaction key (e.g., Left Mouse) is held down.
     /// </summary>
-    public void ExternalPaint(Vector2 uvCoordinate)
+    // (เปลี่ยนชื่อตัวแปรเป็น rawUV เพื่อให้สื่อความหมายว่านี่ยังไม่ได้แปลง)
+    public void ExternalPaint(Vector2 rawUV)
     {
-        PaintStroke(uvCoordinate);
+        // --- (FIX 3) ---
+        // นี่คือส่วนที่แก้ไข Bug
+        // เราจะแปลง rawUV ที่ได้จาก Raycast (ซึ่งไม่สน Tiling/Offset)
+        // ให้กลายเป็น UV ที่ถูกต้องตามที่แสดงผลบนจอ
+
+        // 1. ดึงค่า Tiling (Scale) และ Offset จาก Material
+        Vector2 tiling = drawableMaterial.mainTextureScale;
+        Vector2 offset = drawableMaterial.mainTextureOffset;
+
+        // 2. คำนวณ UV ที่แปลงแล้ว (เหมือนใน Shader: v.uv * _MainTex_ST.xy + _MainTex_ST.zw)
+        Vector2 transformedUV = (rawUV * tiling) + offset;
+
+        // 3. จัดการเรื่อง Texture Wrap (เผื่อ Tiling/Offset ทำให้ UV เกิน 0-1)
+        // เราใช้การคำนวณแบบ frac() (หาเศษส่วน) เพื่อให้ UV วนกลับมาอยู่ในช่วง 0-1 เสมอ
+        transformedUV.x = transformedUV.x - Mathf.Floor(transformedUV.x);
+        transformedUV.y = transformedUV.y - Mathf.Floor(transformedUV.y);
+
+        // 4. ส่ง UV ที่แปลงค่าแล้วไปวาด
+        PaintStroke(transformedUV);
     }
 
     /// <summary>
@@ -82,13 +110,10 @@ public class SignPainter : MonoBehaviour, IInteractable
 
     /// <summary>
     /// Required by the IInteractable interface.
-    /// Allows the crosshair to change state when looking at this object.
-    /// Actual painting logic is handled by FPInteract calling ExternalPaint().
     /// </summary>
     public void Interact(GameObject interactor)
     {
         // No action needed here.
-        // Painting is managed by FPInteract's continuous interaction.
     }
 
     /// <summary>
@@ -129,16 +154,16 @@ public class SignPainter : MonoBehaviour, IInteractable
     /// </summary>
     private void InterpolateDraw(Vector2 startUV, Vector2 endUV)
     {
+        // (ส่วนนี้ไม่ต้องแก้ เพราะมันทำงานกับ UV ที่แปลงค่ามาแล้วจาก PaintStroke)
         Vector2 startPixel = new Vector2(startUV.x * drawableTexture.width, startUV.y * drawableTexture.height);
         Vector2 endPixel = new Vector2(endUV.x * drawableTexture.width, endUV.y * drawableTexture.height);
         
         float distance = Vector2.Distance(startPixel, endPixel);
         float brushRadius = brushSize / 2.0f;
         
-        // Determine step size based on brush size to avoid gaps
         float stepSize = Mathf.Max(1.0f, brushRadius * 0.25f);
         int steps = (int)Mathf.Ceil(distance / stepSize);
-        steps = Mathf.Max(1, steps); // Ensure at least one step
+        steps = Mathf.Max(1, steps); 
 
         for (int i = 0; i <= steps; i++)
         {
@@ -153,6 +178,7 @@ public class SignPainter : MonoBehaviour, IInteractable
     /// </summary>
     public void DrawOnTexture(Vector2 uvCoordinate)
     {
+        // (ส่วนนี้ไม่ต้องแก้ เพราะมันทำงานกับ UV ที่แปลงค่ามาแล้ว)
         if (drawableTexture == null) return;
 
         int pixelX = (int)(uvCoordinate.x * drawableTexture.width);
@@ -161,14 +187,12 @@ public class SignPainter : MonoBehaviour, IInteractable
         float brushRadius = brushSize / 2.0f;
         int intRadius = (int)Mathf.Ceil(brushRadius);
 
-        // Loop through a square bounding box around the brush center
         for (int y = -intRadius; y <= intRadius; y++)
         {
             for (int x = -intRadius; x <= intRadius; x++)
             {
                 float distance = new Vector2(x, y).magnitude;
                 
-                // Only draw pixels within the circular radius
                 if (distance > brushRadius)
                 {
                     continue;
@@ -177,17 +201,14 @@ public class SignPainter : MonoBehaviour, IInteractable
                 int targetX = pixelX + x;
                 int targetY = pixelY + y;
 
-                // Check if the pixel is within the texture bounds
                 if (targetX >= 0 && targetX < drawableTexture.width &&
                     targetY >= 0 && targetY < drawableTexture.height)
                 {
-                    // Calculate falloff for a soft brush edge
                     float falloff = distance / brushRadius;
                     float strength = Mathf.SmoothStep(1.0f, 0.0f, falloff);
 
                     Color originalColor = drawableTexture.GetPixel(targetX, targetY);
                     
-                    // Blend the new color with the original color
                     float blendAlpha = strength * paintColor.a;
                     Color blendedColor = Color.Lerp(originalColor, paintColor, blendAlpha);
 
