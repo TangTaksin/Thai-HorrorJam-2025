@@ -1,25 +1,36 @@
-using System.Collections.Generic;
-using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class FPInteract : MonoBehaviour
 {
-    Transform _cam_transform;
-    GameObject _detected_interactable;
-    private PlayerControls controls;
+    [Header("Core Settings")]
+    [Tooltip("ระยะยิง Raycast สูงสุด (ไกลที่สุดเท่าที่เป็นไปได้)")]
+    [SerializeField] private float maxRaycastDistance = 10f;
+    [Tooltip("Layer ทั้งหมดที่ Raycast จะตรวจจับ")]
+    [SerializeField] private LayerMask layerFilters;
 
-    [SerializeField] LayerMask layerFilters;
-    [SerializeField] float detectionRayLenght = 2f;
+    [Header("References")]
+    [Tooltip("ลาก Crosshair Controller มาใส่ (เพื่อดึงค่า Settings)")]
+    [SerializeField] private CrosshairController crosshairController;
+
+    public IInteractable DetectedInteractable { get; private set; }
+
+    private RaycastHit currentHitInfo;
+    private bool hasHitInfo;
+    private SignPainter lastPainter;
+
+    private Transform _cam_transform;
+    private PlayerControls controls;
 
     private void Awake()
     {
         _cam_transform = Camera.main.transform;
         controls = new PlayerControls();
 
-        controls.Enable();
-
         controls.Player.Interact.performed += Interact;
+
+        if (crosshairController == null)
+            Debug.LogError("FPInteract: ยังไม่ได้ลาก CrosshairController ใส่ใน Inspector!");
     }
 
     private void OnEnable() => controls.Enable();
@@ -28,28 +39,126 @@ public class FPInteract : MonoBehaviour
     private void Update()
     {
         FindInteractable();
+
+        HandlePainting();
     }
 
     void FindInteractable()
     {
+        DetectedInteractable = null;
+        hasHitInfo = false;
+
+        if (crosshairController == null) return;
+
         Ray ray = new Ray(_cam_transform.position, _cam_transform.forward);
 
-        Physics.Raycast(ray, out RaycastHit hitInfo, detectionRayLenght, layerFilters);
+        if (Physics.Raycast(ray, out currentHitInfo, maxRaycastDistance, layerFilters))
+        {
+            hasHitInfo = true;
+            int objectLayer = currentHitInfo.collider.gameObject.layer;
 
-        print(hitInfo.collider);
-        _detected_interactable = hitInfo.transform?.gameObject;
+            CrosshairLayerSetting setting = crosshairController.GetSettingForLayer(objectLayer);
+
+            if (setting != null && currentHitInfo.distance <= setting.maxDistance)
+            {
+                if (currentHitInfo.collider.TryGetComponent<IInteractable>(out var interactable))
+                {
+                    DetectedInteractable = interactable;
+                }
+            }
+        }
     }
 
     void Interact(InputAction.CallbackContext context)
     {
-        if (!_detected_interactable)
-            return;
-
-        _detected_interactable.TryGetComponent<IInteractable>(out var interactable);
-
-        if (interactable != null)
+        if (DetectedInteractable != null)
         {
-            interactable.Interact(this.gameObject);
+            DetectedInteractable.Interact(this.gameObject);
+        }
+    }
+
+    void HandlePainting()
+    {
+        bool isPainting = controls.Player.Draw.IsPressed();
+        SignPainter currentPainter = null;
+
+        if (isPainting && DetectedInteractable != null && hasHitInfo)
+        {
+            if (DetectedInteractable is SignPainter painter)
+            {
+                painter.ExternalPaint(currentHitInfo.textureCoord);
+                currentPainter = painter;
+            }
+        }
+
+        if (lastPainter != null && lastPainter != currentPainter)
+        {
+            lastPainter.StopPainting();
+        }
+
+        lastPainter = currentPainter;
+    }
+
+
+    public GameObject GetDetectedObject()
+    {
+        if (DetectedInteractable == null)
+            return null;
+        MonoBehaviour interactableMono = DetectedInteractable as MonoBehaviour;
+        return interactableMono != null ? interactableMono.gameObject : null;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Transform camTransform = _cam_transform;
+        if (camTransform == null)
+        {
+            camTransform = Camera.main?.transform;
+        }
+
+        if (camTransform == null)
+        {
+            return;
+        }
+
+        Ray ray = new Ray(camTransform.position, camTransform.forward);
+
+        Gizmos.color = Color.grey;
+        Gizmos.DrawRay(ray.origin, ray.direction * maxRaycastDistance);
+
+        if (Physics.Raycast(ray, out RaycastHit hitInfo, maxRaycastDistance, layerFilters))
+        {
+            Gizmos.color = Color.white;
+            Gizmos.DrawSphere(hitInfo.point, 0.05f);
+
+            if (crosshairController == null)
+            {
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawLine(ray.origin, hitInfo.point);
+                return;
+            }
+
+            int objectLayer = hitInfo.collider.gameObject.layer;
+            CrosshairLayerSetting setting = crosshairController.GetSettingForLayer(objectLayer);
+
+            if (setting != null)
+            {
+                if (hitInfo.distance <= setting.maxDistance)
+                {
+                    Gizmos.color = Color.green;
+                    Gizmos.DrawLine(ray.origin, hitInfo.point);
+                }
+                else
+                {
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawLine(ray.origin, hitInfo.point);
+                }
+            }
+            else
+            {
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawLine(ray.origin, hitInfo.point);
+            }
         }
     }
 }

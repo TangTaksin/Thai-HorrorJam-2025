@@ -122,6 +122,55 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &3736281842446904554
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 746253050370034141}
+  - component: {fileID: 8609322884407081717}
+  m_Layer: 0
+  m_Name: Interacter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &746253050370034141
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3736281842446904554}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8823813454673112248}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8609322884407081717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3736281842446904554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88a0a1ae86694cd4d9cb3035731d2bad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FPInteract
+  maxRaycastDistance: 10
+  layerFilters:
+    serializedVersion: 2
+    m_Bits: 768
+  crosshairController: {fileID: 0}
 --- !u!1 &3773585622249064787
 GameObject:
   m_ObjectHideFlags: 0
@@ -1251,6 +1300,7 @@ Transform:
   m_Children:
   - {fileID: 3411365642880244740}
   - {fileID: 5408005915651602485}
+  - {fileID: 746253050370034141}
   m_Father: {fileID: 6203486935779666522}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9008000581178230078
@@ -1308,7 +1358,7 @@ MonoBehaviour:
   maxRightRot: 30
   maxUpRot: 30
   maxDownRot: 30
-  returnSpeed: 0
+  returnSpeed: 15
   inputThreshold: 0.001
 --- !u!114 &8447920262711427297
 MonoBehaviour:

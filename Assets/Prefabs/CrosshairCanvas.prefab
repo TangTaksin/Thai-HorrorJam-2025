@@ -36,7 +36,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 64, y: 64}
+  m_SizeDelta: {x: 32, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &68180438576880845
 CanvasRenderer:
@@ -90,10 +90,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CrosshairController
   crosshair: {fileID: 1139144176202223644}
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  defaultSize: 32
+  defaultIcon: {fileID: 21300000, guid: c6f1090dc31f9b44daccdb118f8d90da, type: 3}
   runningColor: {r: 0.8792453, g: 0.36331078, b: 0.36331078, a: 1}
-  defaultSize: 64
-  runSize: 128
+  runSize: 64
+  runningIcon: {fileID: 21300000, guid: c13e4762ed711c34eaa0f948dda02ecf, type: 3}
+  layerSettings:
+  - layer:
+      serializedVersion: 2
+      m_Bits: 256
+    color: {r: 1, g: 1, b: 1, a: 1}
+    size: 64
+    icon: {fileID: 21300000, guid: ad219b7a1fc6c9b49816c02bf1a3746b, type: 3}
+    maxDistance: 6
+  - layer:
+      serializedVersion: 2
+      m_Bits: 512
+    color: {r: 1, g: 1, b: 1, a: 1}
+    size: 64
+    icon: {fileID: 21300000, guid: bad8c7ae1cc728e43a40bdf2f899af98, type: 3}
+    maxDistance: 2
   player: {fileID: 0}
+  interact: {fileID: 0}
 --- !u!1 &7211848888572789051
 GameObject:
   m_ObjectHideFlags: 0
