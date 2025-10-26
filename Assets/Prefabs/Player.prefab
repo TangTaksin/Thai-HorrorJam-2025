@@ -271,7 +271,6 @@ GameObject:
   - component: {fileID: 6203486935779666522}
   - component: {fileID: 8047436093293300142}
   - component: {fileID: 3651037986760496385}
-  - component: {fileID: 7494696087472135221}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -355,18 +354,6 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 576
---- !u!114 &7494696087472135221
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4201375226398796645}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b55e5489f03d80b468ae23beba3fe816, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GamepadDebugger
 --- !u!1 &4328665486226019719
 GameObject:
   m_ObjectHideFlags: 0
