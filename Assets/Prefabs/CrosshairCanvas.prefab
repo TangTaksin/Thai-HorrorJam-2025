@@ -110,6 +110,13 @@ MonoBehaviour:
     size: 64
     icon: {fileID: 21300000, guid: bad8c7ae1cc728e43a40bdf2f899af98, type: 3}
     maxDistance: 2
+  - layer:
+      serializedVersion: 2
+      m_Bits: 1024
+    color: {r: 1, g: 1, b: 1, a: 1}
+    size: 64
+    icon: {fileID: 21300000, guid: c218db879c8c4b74e952bde3718a5fc1, type: 3}
+    maxDistance: 5
   player: {fileID: 0}
   interact: {fileID: 0}
 --- !u!1 &7211848888572789051
