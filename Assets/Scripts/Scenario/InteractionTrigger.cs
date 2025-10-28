@@ -27,7 +27,7 @@ public class InteractionTrigger : MonoBehaviour
 
     // --- ตัวแปรภายใน ---
     private bool isPlayerInside = false;
-    private bool isUnlocked = false; // ตัวแปรสถานะการล็อค
+    [SerializeField] private bool isUnlocked = false; // ตัวแปรสถานะการล็อค
     private bool isBusy = false; // (ใหม่!) ตัวแปรกันการกดรัว
 
     private void Awake()
