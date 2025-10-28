@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78e43b18b7386574d92223340481f852, type: 3}
+  m_Name: FailSFX
+  m_EditorClassIdentifier: Assembly-CSharp::AudioEvent
+  clip: {fileID: 8300000, guid: 27ba50ccdb2129244bc724b509dfbe9f, type: 3}
+  volume: 1
+  pitch: 1
+  loop: 0
