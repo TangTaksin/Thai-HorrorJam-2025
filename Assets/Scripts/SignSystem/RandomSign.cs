@@ -17,6 +17,11 @@ public class RandomSign : MonoBehaviour
     [Header("การเพิ่มประสิทธิภาพ")]
     [Tooltip("ความถี่ในการตรวจสอบการมองเห็น (ครั้งต่อวินาที)")]
     public float visibilityCheckRate = 10f;
+    
+    // --- เพิ่มเข้ามาใหม่ ---
+    [Tooltip("ระยะทางสูงสุดที่สคริปต์จะเริ่มตรวจสอบ (เมตร)")]
+    public float maxDistance = 50f;
+    // ----------------------
 
     [Header("ตัวเลือกการเปลี่ยน Material")]
     [Tooltip("เลือก false เพื่อเปลี่ยน Material ได้หลายครั้ง")]
@@ -34,6 +39,10 @@ public class RandomSign : MonoBehaviour
     private bool hasChangedWhileInvisible = false;
     private float invisibleTimer = 0f;
     private float visibilityCheckTimer = 0f;
+
+    // --- เพิ่มเข้ามาใหม่ ---
+    private float maxDistanceSqr; // เก็บค่าระยะทางยกกำลังสองเพื่อประสิทธิภาพ
+    // ----------------------
 
     void Awake()
     {
@@ -55,6 +64,11 @@ public class RandomSign : MonoBehaviour
         if (playerCamera == null)
             playerCamera = Camera.main;
 
+        // --- เพิ่มเข้ามาใหม่ ---
+        // คำนวณค่า maxDistance ยกกำลังสองไว้ล่วงหน้า
+        maxDistanceSqr = maxDistance * maxDistance;
+        // ----------------------
+
         InitializeMaterials();
     }
 
@@ -73,6 +87,7 @@ public class RandomSign : MonoBehaviour
         currentMaterialIndex = -1;
         for (int i = 0; i < symbolMaterials.Length; i++)
         {
+            // เปรียบเทียบ material ต้นฉบับ ไม่ใช่ instance
             if (symbolMaterials[i] == initial)
             {
                 currentMaterialIndex = i;
@@ -89,6 +104,23 @@ public class RandomSign : MonoBehaviour
     void Update()
     {
         if (playerCamera == null) return;
+
+        // --- เพิ่มเข้ามาใหม่ ---
+        // ตรวจสอบระยะทางก่อนเพื่อเพิ่มประสิทธิภาพ
+        // ใช้ .sqrMagnitude เพื่อหลีกเลี่ยงการคำนวณ Square Root ที่ช้า
+        float sqrDist = (playerCamera.transform.position - objectRenderer.bounds.center).sqrMagnitude;
+        if (sqrDist > maxDistanceSqr)
+        {
+            // ผู้เล่นอยู่ไกลเกินไป ไม่ต้องทำอะไร
+            // รีเซ็ตสถานะเพื่อให้เริ่มทำงานใหม่เมื่อเข้าใกล้
+            isVisibleNow = false;
+            invisibleTimer = 0f;
+            // (hasBeenSeen สามารถคงไว้ หรือรีเซ็ตก็ได้ ขึ้นอยู่กับดีไซน์)
+            // hasBeenSeen = false; 
+            return; // ออกจาก Update ทันที
+        }
+        // ----------------------
+
 
         // จำกัดความถี่ในการตรวจสอบการมองเห็น
         visibilityCheckTimer += Time.deltaTime;
@@ -192,6 +224,15 @@ public class RandomSign : MonoBehaviour
 #if UNITY_EDITOR
     void OnDrawGizmosSelected()
     {
+        // --- เพิ่มเข้ามาใหม่ ---
+        // วาด Gizmo ของระยะทำงาน
+        if (objectRenderer != null)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(objectRenderer.bounds.center, maxDistance);
+        }
+        // ----------------------
+
         if (playerCamera != null && objectRenderer != null)
         {
             Gizmos.color = isVisibleNow ? Color.green : Color.red;

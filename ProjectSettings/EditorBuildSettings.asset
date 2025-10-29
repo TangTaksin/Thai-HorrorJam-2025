@@ -8,15 +8,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Scenes/MainMenu.unity
     guid: a15f39ffad7904b4693df280ecce5e27
-  - enabled: 0
-    path: Assets/_Scenes/PlayerDemo.unity
-    guid: 102aa329f547266448ac950780579e17
-  - enabled: 0
+  - enabled: 1
     path: Assets/_Scenes/TerrainDemo.unity
     guid: 975c10e76885b694ab5c35a001635370
-  - enabled: 1
-    path: Assets/_Scenes/MainLevel.unity
-    guid: 5ba562a1fabcf9e42b3dbad686525d97
   - enabled: 1
     path: Assets/_Scenes/InspectionScene.unity
     guid: a116c050c56e4f64f871e04bcf570f24
