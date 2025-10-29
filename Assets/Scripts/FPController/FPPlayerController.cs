@@ -94,6 +94,11 @@ public class FPPlayerController : MonoBehaviour
     }
     #endregion
 
+    public void HandlePause(bool isPlaying)
+    {
+
+    }
+
     #region Initialization
     private void InitializeComponents()
     {
@@ -337,7 +342,7 @@ public class FPPlayerController : MonoBehaviour
     {
         if (playerCamera == null) return;
 
-        float targetCameraY = currentHeight - 0.1f;
+        float targetCameraY = 0;
         Vector3 pos = playerCamera.localPosition;
         pos.y = Mathf.Lerp(pos.y, targetCameraY, Time.deltaTime * crouchSpeed);
         playerCamera.localPosition = pos;

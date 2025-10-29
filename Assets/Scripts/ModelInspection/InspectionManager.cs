@@ -28,6 +28,7 @@ public class InspectionManager : MonoBehaviour
 
     void OnInspectorLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
+        GameManager.Instance.ChangeState(GameState.Inspect);
         SceneManager.sceneLoaded -= OnInspectorLoaded;
         InspectorLoaded?.Invoke(stachedItem);
 
@@ -38,6 +39,7 @@ public class InspectionManager : MonoBehaviour
     public void CloseInspector()
     {
         SceneManager.UnloadSceneAsync("InspectionScene");
+        GameManager.Instance.ChangeState(GameState.Playing);
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;

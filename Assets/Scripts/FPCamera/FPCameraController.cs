@@ -31,6 +31,7 @@ public class FPCameraController : MonoBehaviour
     private float targetHorizontalRotation;
 
     // Input
+    bool canInput = true;
     private Vector2 lookInput;
 
     // Camera shake
@@ -62,15 +63,32 @@ public class FPCameraController : MonoBehaviour
     private void OnEnable()
     {
         controls.Enable();
+
         controls.Player.Look.performed += OnLookPerformed;
         controls.Player.Look.canceled += OnLookCanceled;
+
+        UISettingsManager.OnSettingApplied += ApplySetting;
     }
 
     private void OnDisable()
     {
         controls.Player.Look.performed -= OnLookPerformed;
         controls.Player.Look.canceled -= OnLookCanceled;
+
+        UISettingsManager.OnSettingApplied -= ApplySetting;
+
         controls.Disable();
+    }
+
+    public void ApplySetting()
+    {
+        lookSensitivity = PlayerPrefs.GetFloat("LookSensitivity");
+        smoothLook = PlayerPrefs.GetInt("CameraSmooth", 1) == 1;
+    }
+
+    public void HandlePause(bool isPlaying)
+    {
+        canInput = isPlaying;
     }
 
     private void InitializeCamera()
@@ -96,7 +114,8 @@ public class FPCameraController : MonoBehaviour
 
     private void OnLookPerformed(InputAction.CallbackContext context)
     {
-        lookInput = context.ReadValue<Vector2>();
+        if (canInput)
+            lookInput = context.ReadValue<Vector2>();
     }
 
     private void OnLookCanceled(InputAction.CallbackContext context)
