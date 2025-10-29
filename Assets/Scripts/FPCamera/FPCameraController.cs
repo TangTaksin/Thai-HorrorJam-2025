@@ -54,7 +54,7 @@ public class FPCameraController : MonoBehaviour
     private void Awake()
     {
         InitializeCamera();
-        InitializeCursor();
+        // InitializeCursor();
         InitializeShake();
         controls = new PlayerControls();
     }
@@ -82,7 +82,7 @@ public class FPCameraController : MonoBehaviour
             Debug.LogWarning($"{nameof(FPCameraController)}: Main Camera not assigned or found!");
     }
 
-    private void InitializeCursor()
+    public void InitializeCursor()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
