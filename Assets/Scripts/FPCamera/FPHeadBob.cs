@@ -35,7 +35,7 @@ public class FPHeadBob : MonoBehaviour
         initialLocalPos = transform.localPosition;
     }
 
-    void FixedUpdate()
+    void LateUpdate()
     {
         if (player == null || player.Controller == null) return;
 
@@ -75,6 +75,8 @@ public class FPHeadBob : MonoBehaviour
         {
             targetPos.y -= (1f - player.Controller.height / 2f);
         }
+
+        
 
         // Smoothly move camera using DOTween
         transform.DOLocalMove(targetPos, smoothTime)
