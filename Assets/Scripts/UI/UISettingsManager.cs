@@ -194,6 +194,7 @@ public class UISettingsManager : MonoBehaviour
         PlayerPrefs.SetFloat("AmbientVolume", ambientVolumeSlider.value);
         PlayerPrefs.SetFloat("SFXVolume", sfxVolumeSlider.value);
 
+        bool isFullscreen = fullscreenToggle.isOn;
         PlayerPrefs.SetInt("Fullscreen", fullscreenToggle.isOn ? 1 : 0);
         PlayerPrefs.SetInt("CameraBob", cameraBobToggle.isOn ? 1 : 0);
         PlayerPrefs.SetInt("CameraSmooth", cameraSmoothToggle.isOn ? 1 : 0);
@@ -201,6 +202,8 @@ public class UISettingsManager : MonoBehaviour
 
         PlayerPrefs.SetFloat("LookSensitivity", lookSensitivitySlider.value);
         PlayerPrefs.Save();
+
+        Screen.fullScreen = isFullscreen;
 
         Debug.Log("✅ Settings saved via Apply button.");
         ShowSavedMessage();
@@ -225,7 +228,7 @@ public class UISettingsManager : MonoBehaviour
         SetAmbientVolume(ambientVol);
         SetSFXVolume(sfxVol);
 
-        bool isFullscreen = PlayerPrefs.GetInt("Fullscreen", 1) == 1;
+        bool isFullscreen = PlayerPrefs.GetInt("Fullscreen", 0) == 1;
         fullscreenToggle.isOn = isFullscreen;
         Screen.fullScreen = isFullscreen;
 
@@ -274,7 +277,7 @@ public class UISettingsManager : MonoBehaviour
         fullscreenToggle.isOn = false;
         cameraBobToggle.isOn = true;
         cameraSmoothToggle.isOn = true;
-        jumpScareToggle.isOn = true;
+        jumpScareToggle.isOn = false;
 
         lookSensitivitySlider.value = 0.5f;
 
@@ -282,6 +285,8 @@ public class UISettingsManager : MonoBehaviour
         SetMusicVolume(50);
         SetAmbientVolume(50);
         SetSFXVolume(50);
+
+        Screen.fullScreen = false;
 
         Debug.Log("🔁 Settings reset to default values.");
     }

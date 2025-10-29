@@ -582,6 +582,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8644649774326725852}
   - component: {fileID: 7662231317316904145}
+  - component: {fileID: 92800957519168690}
   m_Layer: 5
   m_Name: SettingsPanel
   m_TagString: Untagged
@@ -621,7 +622,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 521994341493824385}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 8246e8f81ad425840936a3f4a97ad00a, type: 2}
   m_CullingMode: 0
@@ -635,6 +636,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &92800957519168690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 521994341493824385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e7873f4024fd55419de9470b5d919d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CommonAnimationEvents
 --- !u!1 &528430420908698783
 GameObject:
   m_ObjectHideFlags: 0
@@ -3661,7 +3674,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: -842419780, guid: 01524b9c7fa231e4a91903079199364f, type: 3}
-  m_Type: 2
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -4253,7 +4266,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: -842419780, guid: 01524b9c7fa231e4a91903079199364f, type: 3}
-  m_Type: 2
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -5969,7 +5982,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: -842419780, guid: 01524b9c7fa231e4a91903079199364f, type: 3}
-  m_Type: 2
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
