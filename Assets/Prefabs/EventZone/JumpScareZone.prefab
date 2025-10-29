@@ -90,7 +90,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c461daf9e71f3834e9b63008fab7f048, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JumpScareManager
-  scareObject: {fileID: 0}
+  scareObject: {fileID: 6397291155531275063, guid: 44a0de0f766c9634eb66f1d56b7edc9d, type: 3}
   scareSound: {fileID: 8300000, guid: 0b5fa508de3af404b922cd18f564386c, type: 3}
   scareDuration: 0.6
   disablePlayerControl: 1

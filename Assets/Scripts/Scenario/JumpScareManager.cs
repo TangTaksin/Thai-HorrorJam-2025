@@ -129,8 +129,8 @@ public class JumpScareManager : MonoBehaviour
             return;
         }
 
-        if (scareObject != null)
-            scareObject.SetActive(false);
+        // if (scareObject != null)
+        //     scareObject.SetActive(false);
 
         // ตรวจสอบ AudioSource
         if (audioSource == null)

@@ -3395,6 +3395,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2202293692638771540, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
+      propertyPath: radius
+      value: 0.101
+      objectReference: {fileID: 0}
+    - target: {fileID: 2202293692638771540, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
+      propertyPath: anisotropy
+      value: -0.96
+      objectReference: {fileID: 0}
+    - target: {fileID: 2202293692638771540, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
+      propertyPath: scattering
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 4201375226398796645, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
       propertyPath: m_Name
       value: Player
@@ -6706,7 +6718,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1420413442
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12259,7 +12271,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2004914927
 MonoBehaviour:
   m_ObjectHideFlags: 0
