@@ -43,6 +43,21 @@ public class FPHeadBob : MonoBehaviour
 
     }
 
+    private void OnEnable()
+    {
+        UISettingsManager.OnSettingApplied += ApplySetting;
+    }
+
+    private void OnDisable()
+    {
+        UISettingsManager.OnSettingApplied -= ApplySetting;
+    }
+
+    void ApplySetting()
+    {
+        enableBob = PlayerPrefs.GetInt("CameraBob", 1) == 1;
+    }
+
     private void HandleHeadBobAndBreathing()
     {
         Vector3 targetPos = initialLocalPos;

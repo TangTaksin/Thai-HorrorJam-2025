@@ -4,6 +4,7 @@ using UnityEngine.Audio;
 using DG.Tweening;
 using TMPro;
 using System.Collections;
+using System;
 
 public class UISettingsManager : MonoBehaviour
 {
@@ -46,6 +47,8 @@ public class UISettingsManager : MonoBehaviour
     // ปรับให้ตรงกับชื่อใน Animator ของคุณ
     private const string OpenStateName = "Open_Setting_ui_anim";
     private const string CloseStateName = "Close_Setting_ui_anim";
+
+    public static Action OnSettingApplied;
 
     void Start()
     {
@@ -109,33 +112,27 @@ public class UISettingsManager : MonoBehaviour
 
     public void OpenSettingsPanel()
     {
-        if (settingsPanel == null || animator == null || GameManager.Instance.CurrentState == GameState.Playing) return;
+        if (settingsPanel == null || animator == null) return;
 
         Debug.Log("Opening Settings Panel...");
-        isAnimating = true;
-
-        settingsPanel.SetActive(true);
-        animator.enabled = true;
 
         // 🟢 ทำให้อนิเมชันเล่นแม้ Time.timeScale = 0
+        settingsPanel.SetActive(true);
         animator.updateMode = AnimatorUpdateMode.UnscaledTime;
         animator.SetTrigger("Open");
-
-        StartCoroutine(WaitForOpenAnimation());
+        GameManager.Instance?.ChangeState(GameState.Paused);
     }
 
     public void CloseSettingsPanel()
     {
-        if (animator == null || settingsPanel == null || GameManager.Instance.CurrentState == GameState.Playing) return;
+        if (animator == null || settingsPanel == null) return;
 
         Debug.Log("Closing Settings Panel...");
-        isAnimating = true;
 
         // 🟢 ทำให้อนิเมชันเล่นแม้ Time.timeScale = 0
         animator.updateMode = AnimatorUpdateMode.UnscaledTime;
         animator.SetTrigger("Close");
-
-        StartCoroutine(DeactivatePanelAfterAnimation());
+        GameManager.Instance?.ExitPause();
     }
 
     private IEnumerator WaitForOpenAnimation()
@@ -181,7 +178,7 @@ public class UISettingsManager : MonoBehaviour
         isAnimating = false;
 
         Debug.Log("✅ Close animation finished and panel deactivated");
-        GameManager.Instance.ChangeState(GameState.Playing);
+        GameManager.Instance?.ExitPause();
     }
 
     // ================== SETTINGS LOGIC ====================
@@ -207,6 +204,8 @@ public class UISettingsManager : MonoBehaviour
 
         Debug.Log("✅ Settings saved via Apply button.");
         ShowSavedMessage();
+
+        OnSettingApplied?.Invoke();
     }
 
     private void LoadSettings()
@@ -237,6 +236,8 @@ public class UISettingsManager : MonoBehaviour
         lookSensitivitySlider.value = PlayerPrefs.GetFloat("LookSensitivity", 0.5f);
 
         Debug.Log("🔄 Settings loaded from PlayerPrefs.");
+
+        OnSettingApplied?.Invoke();
     }
 
     public void SetMasterVolume(float volume)

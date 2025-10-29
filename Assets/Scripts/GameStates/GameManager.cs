@@ -44,25 +44,39 @@ public class GameManager : MonoBehaviour
         switch (CurrentState)
         {
             case GameState.MainMenu:
-            
                 Time.timeScale = 1f;
+
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
                 break;
 
             case GameState.Playing:
                 Time.timeScale = 1f;
+
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
                 // Start or resume gameplay
                 break;
 
             case GameState.Inspect:
                 Time.timeScale = 0f;
+
+                Cursor.lockState = CursorLockMode.Confined;
+                Cursor.visible = true;
                 break;
 
             case GameState.Paused:
                 Time.timeScale = 0f;
+
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
                 break;
 
             case GameState.GameOver:
                 Time.timeScale = 0f;
+
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
                 // Show game over screen
                 break;
         }

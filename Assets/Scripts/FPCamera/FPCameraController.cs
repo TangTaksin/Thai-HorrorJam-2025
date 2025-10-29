@@ -66,6 +66,8 @@ public class FPCameraController : MonoBehaviour
 
         controls.Player.Look.performed += OnLookPerformed;
         controls.Player.Look.canceled += OnLookCanceled;
+
+        UISettingsManager.OnSettingApplied += ApplySetting;
     }
 
     private void OnDisable()
@@ -73,7 +75,15 @@ public class FPCameraController : MonoBehaviour
         controls.Player.Look.performed -= OnLookPerformed;
         controls.Player.Look.canceled -= OnLookCanceled;
 
+        UISettingsManager.OnSettingApplied -= ApplySetting;
+
         controls.Disable();
+    }
+
+    public void ApplySetting()
+    {
+        lookSensitivity = PlayerPrefs.GetFloat("LookSensitivity");
+        smoothLook = PlayerPrefs.GetInt("CameraSmooth", 1) == 1;
     }
 
     public void HandlePause(bool isPlaying)
