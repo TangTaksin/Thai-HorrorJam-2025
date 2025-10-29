@@ -1,11 +1,12 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement; 
-using NaughtyAttributes;           
+using UnityEngine.UI; // Required for UI elements like Image
+using NaughtyAttributes; 
 
 /// <summary>
 /// A persistent Singleton for managing scene loading, reloading, and quitting.
-/// Now includes Additive loading and Unloading.
+/// Now includes a fade-to-black transition for scene changes.
 /// </summary>
 public class GameSceneManager : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class GameSceneManager : MonoBehaviour
     
     [BoxGroup("Inspector Scene Loader")]
     [Tooltip("Select a scene from the dropdown to test-load it.")]
-    [SerializeField, Scene] // [Scene] attribute shows a dropdown of scenes in Build Settings
+    [SerializeField, Scene] 
     private string _sceneToLoadForTesting;
 
     // --- Standard Loading ---
@@ -37,7 +38,7 @@ public class GameSceneManager : MonoBehaviour
         LoadSceneByName(_sceneToLoadForTesting);
     }
 
-    // --- Additive / Unload Testing ---
+    // --- Additive / Unload Testing (These do not use the fade) ---
 
     [Button("Test Load (Additive)", EButtonEnableMode.Editor)]
     private void TestLoadSceneAdditive()
@@ -47,7 +48,7 @@ public class GameSceneManager : MonoBehaviour
         LoadSceneAdditiveAsync(_sceneToLoadForTesting);
     }
     
- 
+
     [Button("Test Unload Scene", EButtonEnableMode.Editor)]
     private void TestUnloadScene()
     {
@@ -55,6 +56,18 @@ public class GameSceneManager : MonoBehaviour
         // Call the new Unload method
         UnloadSceneAsync(_sceneToLoadForTesting);
     }
+
+    // --- Fade Transition Settings ---
+
+    [Header("Fade Transition")]
+    [Tooltip("The black UI Image used for fading.")]
+    [SerializeField] private Image _fadeImage;
+
+    [Tooltip("How long the fade in/out transition takes.")]
+    [SerializeField] private float _fadeDuration = 0.5f;
+
+    // --- Private State ---
+    private bool _isFading = false;
 
 
     private void Awake()
@@ -64,6 +77,14 @@ public class GameSceneManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+
+            // Ensure the fade image is set up correctly on start
+            if (_fadeImage != null)
+            {
+                // Set color to black and alpha to 0 (fully transparent)
+                _fadeImage.color = new Color(0f, 0f, 0f, 0f);
+                _fadeImage.raycastTarget = false; // Don't block clicks
+            }
         }
         else
         {
@@ -74,25 +95,26 @@ public class GameSceneManager : MonoBehaviour
     // --- Public API ---
 
     /// <summary>
-    /// Loads a scene by its string name. (Synchronous / Blocking)
-    /// This REPLACES the current scene.
+    /// Loads a scene by its string name (Synchronous / Blocking).
+    /// This REPLACES the current scene and uses a fade transition.
     /// </summary>
     public void LoadSceneByName(string sceneName)
     {
-        SceneManager.LoadScene(sceneName);
+        StartCoroutine(LoadSceneByNameWithFade(sceneName));
     }
 
     /// <summary>
-    /// Loads a scene asynchronously in the background (without a loading screen).
-    /// This REPLACES the current scene.
+    /// Loads a scene asynchronously in the background.
+    /// This REPLACES the current scene and uses a fade transition.
     /// </summary>
     public void LoadSceneAsync(string sceneName)
     {
-        StartCoroutine(LoadSceneAsyncCoroutine(sceneName, LoadSceneMode.Single));
+        StartCoroutine(LoadSceneAsyncWithFade(sceneName, LoadSceneMode.Single));
     }
 
     /// <summary>
     /// [NEW] Loads a scene additively (on top of the current scene).
+    /// This does NOT use a fade transition.
     /// </summary>
     public void LoadSceneAdditiveAsync(string sceneName)
     {
@@ -101,6 +123,7 @@ public class GameSceneManager : MonoBehaviour
 
     /// <summary>
     /// [NEW] Unloads a scene that was loaded additively.
+    /// This does NOT use a fade transition.
     /// </summary>
     public void UnloadSceneAsync(string sceneName)
     {
@@ -111,12 +134,12 @@ public class GameSceneManager : MonoBehaviour
 
     /// <summary>
     /// Reloads the currently active scene.
+    /// Uses a fade transition.
     /// </summary>
     [Button("Reload Current Scene", EButtonEnableMode.Playmode)]
     public void ReloadCurrentScene()
     {
-        string currentSceneName = SceneManager.GetActiveScene().name;
-        SceneManager.LoadScene(currentSceneName);
+        StartCoroutine(ReloadCurrentSceneWithFade());
     }
 
     /// <summary>
@@ -132,8 +155,102 @@ public class GameSceneManager : MonoBehaviour
 
     // --- Coroutines ---
 
+    // --- FADE COROUTINE ---
+    
+    /// <summary>
+    /// Coroutine to fade the screen to a target alpha.
+    /// </summary>
+    /// <param name="targetAlpha">1 = fully black, 0 = fully transparent</param>
+    private IEnumerator Fade(float targetAlpha)
+    {
+        if (_fadeImage == null)
+        {
+            Debug.LogWarning("FadeImage is not assigned. Skipping fade.");
+            yield break;
+        }
+
+        _isFading = true;
+        _fadeImage.raycastTarget = true; // Block clicks during fade
+
+        Color currentColor = _fadeImage.color;
+        float startAlpha = currentColor.a;
+        float timer = 0f;
+
+        while (timer < _fadeDuration)
+        {
+            timer += Time.unscaledDeltaTime; // Use unscaled time for fades
+            float newAlpha = Mathf.Lerp(startAlpha, targetAlpha, timer / _fadeDuration);
+            _fadeImage.color = new Color(currentColor.r, currentColor.g, currentColor.b, newAlpha);
+            yield return null;
+        }
+
+        // Ensure target alpha is set
+        _fadeImage.color = new Color(currentColor.r, currentColor.g, currentColor.b, targetAlpha);
+
+        if (targetAlpha == 0f)
+        {
+            _fadeImage.raycastTarget = false; // Unblock clicks when transparent
+        }
+        
+        _isFading = false;
+    }
+
+    // --- SCENE LOAD WRAPPERS (WITH FADE) ---
+
+    /// <summary>
+    /// Wrapper for Sync load with fade.
+    /// </summary>
+    private IEnumerator LoadSceneByNameWithFade(string sceneName)
+    {
+        if (_isFading) yield break;
+
+        yield return StartCoroutine(Fade(1f)); // Fade Out
+
+        SceneManager.LoadScene(sceneName);
+        
+        // This will run after the new scene is loaded
+        yield return StartCoroutine(Fade(0f)); // Fade In
+    }
+
+    /// <summary>
+    /// Wrapper for Async load with fade.
+    /// </summary>
+    private IEnumerator LoadSceneAsyncWithFade(string sceneName, LoadSceneMode mode)
+    {
+        if (_isFading) yield break;
+
+        yield return StartCoroutine(Fade(1f)); // Fade Out
+
+        // Now, do the async load using the original coroutine
+        yield return StartCoroutine(LoadSceneAsyncCoroutine(sceneName, mode));
+        
+        // This will run after the async load is complete
+        yield return StartCoroutine(Fade(0f)); // Fade In
+    }
+
+    /// <summary>
+    /// Wrapper for Reload with fade.
+    /// </summary>
+    private IEnumerator ReloadCurrentSceneWithFade()
+    {
+        if (_isFading) yield break;
+        
+        string currentSceneName = SceneManager.GetActiveScene().name;
+        
+        yield return StartCoroutine(Fade(1f)); // Fade Out
+
+        SceneManager.LoadScene(currentSceneName);
+        
+        // This will run after the new scene is loaded
+        yield return StartCoroutine(Fade(0f)); // Fade In
+    }
+
+    
+    // --- ORIGINAL LOADING COROUTINES (Now used as utility) ---
+
     /// <summary>
     /// Coroutine for loading scenes (both Single and Additive).
+    /// This is the actual loading part, now called by the fade wrappers.
     /// </summary>
     private IEnumerator LoadSceneAsyncCoroutine(string sceneName, LoadSceneMode mode)
     {
@@ -142,6 +259,7 @@ public class GameSceneManager : MonoBehaviour
 
         while (!operation.isDone)
         {
+            // You could update a loading bar here using operation.progress
             yield return null;
         }
 
