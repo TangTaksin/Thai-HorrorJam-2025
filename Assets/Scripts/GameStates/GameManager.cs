@@ -55,6 +55,7 @@ public class GameManager : MonoBehaviour
 
             case GameState.Playing:
                 Time.timeScale = 1f;
+                AudioListener.pause = false;
 
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
@@ -70,6 +71,7 @@ public class GameManager : MonoBehaviour
 
             case GameState.Paused:
                 Time.timeScale = 0f;
+                AudioListener.pause = true;
 
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;

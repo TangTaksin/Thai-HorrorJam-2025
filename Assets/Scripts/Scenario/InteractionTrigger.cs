@@ -161,7 +161,6 @@ public class InteractionTrigger : MonoBehaviour
 
     public void CallLoadNextLevel(string name)
     {
-        GameManager.Instance.ChangeState(GameState.Playing);
         if (GameSceneManager.Instance != null)
         {
             Debug.Log("Wrapper: กำลังเรียก LoadNextLevel() จาก Instance...");
