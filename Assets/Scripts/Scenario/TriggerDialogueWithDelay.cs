@@ -99,9 +99,23 @@ public class TriggerDialogueWithDelay : MonoBehaviour
 
         for (int i = 0; i < dialogues.Length; i++)
         {
+            // BUG FIX: Check if textUI or this component was destroyed
+            if (textUI == null || this == null)
+            {
+                Debug.LogWarning("Dialogue target (TextUI or self) was destroyed. Halting dialogue.");
+                isTyping = false;
+                yield break;
+            }
+
             yield return StartCoroutine(TypeText(dialogues[i]));
 
-            // Simplified delay logic
+            // BUG FIX: Check again after typing, in case it was destroyed during
+            if (this == null) 
+            {
+                isTyping = false;
+                yield break;
+            }
+
             yield return new WaitForSeconds(delayBetweenLines);
         }
 
@@ -115,7 +129,9 @@ public class TriggerDialogueWithDelay : MonoBehaviour
 
         // Wait for fade to finish before clearing text
         yield return new WaitForSeconds(fadeDuration);
-        textUI.text = "";
+        
+        if (textUI != null) // Check again before clearing
+            textUI.text = "";
 
         isTyping = false;
 
@@ -126,8 +142,12 @@ public class TriggerDialogueWithDelay : MonoBehaviour
 
     IEnumerator TypeText(string textToType)
     {
-        // BUG FIX: Removed 'isTyping = true' and 'isTyping = false' from this
-        // coroutine. 'PlayDialogues' should manage the overall 'isTyping' state.
+        // BUG FIX: Check if textUI is valid
+        if (textUI == null)
+        {
+            Debug.LogWarning("TextUI was destroyed, cannot type.");
+            yield break;
+        }
         
         textUI.text = "";
 
@@ -145,6 +165,10 @@ public class TriggerDialogueWithDelay : MonoBehaviour
         // Type out the text
         foreach (char letter in textToType)
         {
+            // BUG FIX: Check every letter in case textUI is destroyed mid-typing
+            if (textUI == null)
+                yield break;
+                
             textUI.text += letter;
             yield return new WaitForSeconds(typingSpeed);
         }
@@ -155,6 +179,39 @@ public class TriggerDialogueWithDelay : MonoBehaviour
         // Clean up DOTween tweens
         if (canvasGroup != null)
             DOTween.Kill(canvasGroup);
+        
+        // Stop coroutines to be safe (though they stop on destroy anyway)
+        if (dialogueCoroutine != null)
+            StopCoroutine(dialogueCoroutine);
+        isTyping = false;
+    }
+
+    // -------------------------------------------------------------------------
+    // --- (Thai) วิธีแก้ปัญหา Script ถูกทำลายระหว่างเล่น Dialogue ---
+    // A: Script ที่ถูกทำลาย (Destroy) จะหยุดทำงานทันที ไม่สามารถทำงานต่อได้
+    // B: วิธีแก้คือ "อย่าเพิ่ง" Destroy(gameObject) โดยตรง
+    // C: ให้ Script อื่นที่ต้องการทำลาย Object นี้ เรียกใช้เมธอด DestroySafely() นี้แทน
+    //    เช่น: otherScript.GetComponent<TriggerDialogueWithDelay>().DestroySafely();
+    // D: เมธอดนี้จะรอให้ Dialogue พูดจนจบก่อน (isTyping == false)
+    //    แล้วจึงค่อยทำลาย GameObject ให้อัตโนมัติ
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Destroys this GameObject safely, waiting for dialogue to finish if it's playing.
+    /// Call this from other scripts instead of Destroy(gameObject).
+    /// </summary>
+    public void DestroySafely()
+    {
+        StartCoroutine(DestroyWhenDone());
+    }
+
+    private IEnumerator DestroyWhenDone()
+    {
+        // Wait until the dialogue is no longer typing
+        yield return new WaitUntil(() => !isTyping);
+        
+        // Now it's safe to destroy
+        Destroy(gameObject);
     }
     
     // --- Editor Test Button ---
