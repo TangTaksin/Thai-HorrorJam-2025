@@ -1,0 +1,35 @@
+using TMPro;
+using UnityEngine;
+
+public class PointerInfoDisplay : MonoBehaviour
+{
+
+    TextMeshProUGUI pointerTxt;
+
+    private void Start()
+    {
+        pointerTxt = GetComponent<TextMeshProUGUI>();
+        pointerTxt.text = string.Empty;
+    }
+
+    private void OnEnable()
+    {
+        FPInteract.OnDetectedInteractableChanged += UpdatePointerText;
+    }
+
+    private void OnDisable()
+    {
+        FPInteract.OnDetectedInteractableChanged -= UpdatePointerText;
+    }
+
+    void UpdatePointerText(IInteractable interactable)
+    {
+        var itemObj = interactable as ItemObject;
+        var isntNull = itemObj != null;
+
+        if (isntNull)
+            pointerTxt.text = itemObj.itemDisplayName;
+        else
+            pointerTxt.text = string.Empty;
+    }
+}

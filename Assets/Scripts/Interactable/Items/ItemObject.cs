@@ -7,6 +7,8 @@ public class ItemObject : MonoBehaviour, IInteractable
     public string itemDisplayName;
     [Multiline] public string itemDesciption;
 
+    public bool canInspect;
+
     MeshFilter meshFilter;
     MeshRenderer meshRenderer;
 
