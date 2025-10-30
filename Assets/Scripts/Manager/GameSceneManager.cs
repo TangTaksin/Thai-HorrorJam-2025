@@ -1,8 +1,8 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement; 
+using UnityEngine.SceneManagement;
 using UnityEngine.UI; // Required for UI elements like Image
-using NaughtyAttributes; 
+using NaughtyAttributes;
 
 /// <summary>
 /// A persistent Singleton for managing scene loading, reloading, and quitting.
@@ -13,12 +13,14 @@ public class GameSceneManager : MonoBehaviour
     // The static instance of the Singleton
     public static GameSceneManager Instance { get; private set; }
 
-    
+
+
+
     // --- Inspector Test Actions ---
-    
+
     [BoxGroup("Inspector Scene Loader")]
     [Tooltip("Select a scene from the dropdown to test-load it.")]
-    [SerializeField, Scene] 
+    [SerializeField, Scene]
     private string _sceneToLoadForTesting;
 
     // --- Standard Loading ---
@@ -29,8 +31,8 @@ public class GameSceneManager : MonoBehaviour
         if (string.IsNullOrEmpty(_sceneToLoadForTesting)) return;
         LoadSceneAsync(_sceneToLoadForTesting);
     }
-    
-    
+
+
     [Button("Test Load (Sync - Single)", EButtonEnableMode.Editor)]
     private void TestLoadSceneSync()
     {
@@ -47,7 +49,7 @@ public class GameSceneManager : MonoBehaviour
         // Call the new Additive method
         LoadSceneAdditiveAsync(_sceneToLoadForTesting);
     }
-    
+
 
     [Button("Test Unload Scene", EButtonEnableMode.Editor)]
     private void TestUnloadScene()
@@ -55,8 +57,14 @@ public class GameSceneManager : MonoBehaviour
         if (string.IsNullOrEmpty(_sceneToLoadForTesting)) return;
         // Call the new Unload method
         UnloadSceneAsync(_sceneToLoadForTesting);
+
     }
 
+
+    [Header("Scene Definitions")]
+    [Tooltip("The name of the main menu scene to load.")]
+    [SerializeField, Scene]
+    private string _mainMenuSceneName = "MainMenu";
     // --- Fade Transition Settings ---
 
     [Header("Fade Transition")]
@@ -72,24 +80,25 @@ public class GameSceneManager : MonoBehaviour
 
     private void Awake()
     {
-        // Singleton pattern implementation
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-
-            // Ensure the fade image is set up correctly on start
-            if (_fadeImage != null)
-            {
-                // Set color to black and alpha to 0 (fully transparent)
-                _fadeImage.color = new Color(0f, 0f, 0f, 0f);
-                _fadeImage.raycastTarget = false; // Don't block clicks
-            }
-        }
-        else
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            return;
         }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+
+    private void Start()
+    {
+        // Ensure the fade image is set up correctly on start
+        if (_fadeImage != null)
+        {
+            // Set color to black and alpha to 0 (fully transparent)
+            _fadeImage.color = new Color(0f, 0f, 0f, 0f);
+            _fadeImage.raycastTarget = false; // Don't block clicks
+        }
+
     }
 
     // --- Public API ---
@@ -130,6 +139,24 @@ public class GameSceneManager : MonoBehaviour
         StartCoroutine(UnloadSceneCoroutine(sceneName));
     }
 
+    /// <summary>
+    /// [NEW] Loads the main menu scene defined in the inspector.
+    /// Uses a fade transition.
+    /// </summary>
+    [Button("Go to Main Menu", EButtonEnableMode.Playmode)]
+    public void ReturnToMenu()
+    {
+        if (string.IsNullOrEmpty(_mainMenuSceneName))
+        {
+            Debug.LogError("Main Menu Scene Name is not set in GameSceneManager!");
+            return;
+        }
+
+        // Use the existing async loader which includes the fade
+        // LoadSceneAsync(_mainMenuSceneName);
+        StartCoroutine(LoadSceneAsyncWithFade(_mainMenuSceneName, LoadSceneMode.Single));
+    }
+
 
 
     /// <summary>
@@ -156,7 +183,7 @@ public class GameSceneManager : MonoBehaviour
     // --- Coroutines ---
 
     // --- FADE COROUTINE ---
-    
+
     /// <summary>
     /// Coroutine to fade the screen to a target alpha.
     /// </summary>
@@ -191,7 +218,7 @@ public class GameSceneManager : MonoBehaviour
         {
             _fadeImage.raycastTarget = false; // Unblock clicks when transparent
         }
-        
+
         _isFading = false;
     }
 
@@ -207,7 +234,7 @@ public class GameSceneManager : MonoBehaviour
         yield return StartCoroutine(Fade(1f)); // Fade Out
 
         SceneManager.LoadScene(sceneName);
-        
+
         // This will run after the new scene is loaded
         yield return StartCoroutine(Fade(0f)); // Fade In
     }
@@ -223,7 +250,7 @@ public class GameSceneManager : MonoBehaviour
 
         // Now, do the async load using the original coroutine
         yield return StartCoroutine(LoadSceneAsyncCoroutine(sceneName, mode));
-        
+
         // This will run after the async load is complete
         yield return StartCoroutine(Fade(0f)); // Fade In
     }
@@ -234,18 +261,18 @@ public class GameSceneManager : MonoBehaviour
     private IEnumerator ReloadCurrentSceneWithFade()
     {
         if (_isFading) yield break;
-        
+
         string currentSceneName = SceneManager.GetActiveScene().name;
-        
+
         yield return StartCoroutine(Fade(1f)); // Fade Out
 
         SceneManager.LoadScene(currentSceneName);
-        
+
         // This will run after the new scene is loaded
         yield return StartCoroutine(Fade(0f)); // Fade In
     }
 
-    
+
     // --- ORIGINAL LOADING COROUTINES (Now used as utility) ---
 
     /// <summary>
@@ -282,7 +309,7 @@ public class GameSceneManager : MonoBehaviour
             Debug.LogWarning($"Scene '{sceneName}' could not be unloaded (maybe it was never loaded additively?)");
             yield break;
         }
-        
+
         // Wait until the operation is finished
         while (!operation.isDone)
         {

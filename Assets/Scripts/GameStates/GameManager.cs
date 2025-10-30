@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        
+
     }
 
     public void ChangeState(GameState newState)
@@ -82,6 +82,11 @@ public class GameManager : MonoBehaviour
         }
 
         OnStateChanged?.Invoke(CurrentState);
+    }
+
+    public void ChangeStateToPlaying()
+    {
+        ChangeState(GameState.Playing);
     }
 
     public void ExitPause()

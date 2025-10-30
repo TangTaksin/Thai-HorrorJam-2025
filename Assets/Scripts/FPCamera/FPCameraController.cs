@@ -7,7 +7,7 @@ public class FPCameraController : MonoBehaviour
     [SerializeField] private Transform playerBody;
     [SerializeField] private Transform mainCamera;
     [SerializeField] private Transform handHolder;
-    [SerializeField] private Transform flashlight;
+    // [SerializeField] private Transform flashlight;
 
     [Header("Look Settings")]
     [SerializeField, Range(0.1f, 10f)] private float lookSensitivity = 1f;
@@ -17,7 +17,7 @@ public class FPCameraController : MonoBehaviour
 
     [Header("Follow Settings")]
     [SerializeField, Range(1f, 50f)] private float handFollowSpeed = 15f;
-    [SerializeField, Range(1f, 50f)] private float flashlightFollowSpeed = 12f;
+    // [SerializeField, Range(1f, 50f)] private float flashlightFollowSpeed = 12f;
 
     [Header("Camera Shake")]
     [SerializeField] private float shakeAmplitude = 0.15f;
@@ -217,16 +217,16 @@ public class FPCameraController : MonoBehaviour
             );
         }
 
-        // Flashlight follows camera (world space)
-        if (flashlight != null)
-        {
-            float flashSmooth = 1f - Mathf.Exp(-flashlightFollowSpeed * dt);
-            flashlight.rotation = Quaternion.LerpUnclamped(
-                flashlight.rotation,
-                mainCamera.rotation,
-                flashSmooth
-            );
-        }
+        // // Flashlight follows camera (world space)
+        // if (flashlight != null)
+        // {
+        //     float flashSmooth = 1f - Mathf.Exp(-flashlightFollowSpeed * dt);
+        //     flashlight.rotation = Quaternion.LerpUnclamped(
+        //         flashlight.rotation,
+        //         mainCamera.rotation,
+        //         flashSmooth
+        //     );
+        // }
     }
 
     /// <summary>
