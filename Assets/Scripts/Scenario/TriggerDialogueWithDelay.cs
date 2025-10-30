@@ -1,0 +1,175 @@
+using UnityEngine;
+using TMPro;
+using System.Collections;
+using DG.Tweening;
+using NaughtyAttributes; // Import NaughtyAttributes
+
+public class TriggerDialogueWithDelay : MonoBehaviour
+{
+    [BoxGroup("Dialogue Settings")]
+    [Required("Text UI must be assigned.")]
+    public TextMeshProUGUI textUI;
+
+    [BoxGroup("Dialogue Settings")]
+    [ReorderableList] // Easier to manage dialogue lines
+    public string[] dialogues;
+
+    [BoxGroup("Dialogue Settings")]
+    [MinValue(0.01f)] // Avoid division by zero or instant typing
+    public float typingSpeed = 0.03f;
+
+    [BoxGroup("Dialogue Settings")]
+    [MinValue(0f)]
+    public float delayBetweenLines = 1.5f;
+
+    [BoxGroup("Dialogue Settings")]
+    public bool playOnce = false;
+
+    [BoxGroup("Animation Settings")]
+    public bool useFadeAnimation = true;
+
+    [BoxGroup("Animation Settings")]
+    [ShowIf("useFadeAnimation")] // Only show this if useFadeAnimation is true
+    [MinValue(0f)]
+    public float fadeDuration = 0.3f;
+
+    // --- Private & Debug Fields ---
+
+    [Foldout("Debug State")]
+    [SerializeField, ReadOnly] // Show private field in inspector for debugging
+    private bool hasPlayed = false;
+    
+    [Foldout("Debug State")]
+    [SerializeField, ReadOnly]
+    private bool isTyping = false;
+
+    private Coroutine dialogueCoroutine;
+    private CanvasGroup canvasGroup;
+
+    private void Awake()
+    {
+        if (useFadeAnimation && textUI != null)
+        {
+            canvasGroup = textUI.GetComponent<CanvasGroup>();
+            if (canvasGroup == null)
+                canvasGroup = textUI.gameObject.AddComponent<CanvasGroup>();
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            StartDialogue();
+        }
+    }
+
+    /// <summary>
+    /// Public method to start the dialogue sequence.
+    /// </summary>
+    public void StartDialogue()
+    {
+        // Don't restart if already typing
+        if (isTyping)
+            return;
+
+        if (playOnce && hasPlayed)
+            return;
+        
+        // Ensure textUI is active before starting
+        if (textUI != null)
+        {
+            textUI.gameObject.SetActive(true);
+        }
+        else
+        {
+            Debug.LogError("TextUI is not assigned!");
+            return;
+        }
+
+        if (dialogueCoroutine != null)
+            StopCoroutine(dialogueCoroutine);
+
+        dialogueCoroutine = StartCoroutine(PlayDialogues());
+    }
+
+    IEnumerator PlayDialogues()
+    {
+        isTyping = true;
+
+        for (int i = 0; i < dialogues.Length; i++)
+        {
+            yield return StartCoroutine(TypeText(dialogues[i]));
+
+            // Simplified delay logic
+            yield return new WaitForSeconds(delayBetweenLines);
+        }
+
+        hasPlayed = true;
+
+        // Fade out
+        if (useFadeAnimation && canvasGroup != null)
+        {
+            canvasGroup.DOFade(0f, fadeDuration);
+        }
+
+        // Wait for fade to finish before clearing text
+        yield return new WaitForSeconds(fadeDuration);
+        textUI.text = "";
+
+        isTyping = false;
+
+        // Reset for next time (if not playOnce)
+        if (canvasGroup != null) 
+            canvasGroup.alpha = 1f;
+    }
+
+    IEnumerator TypeText(string textToType)
+    {
+        // BUG FIX: Removed 'isTyping = true' and 'isTyping = false' from this
+        // coroutine. 'PlayDialogues' should manage the overall 'isTyping' state.
+        
+        textUI.text = "";
+
+        // Fade in
+        if (useFadeAnimation && canvasGroup != null)
+        {
+            canvasGroup.alpha = 0f;
+            canvasGroup.DOFade(1f, fadeDuration);
+        }
+        
+        // Wait for fade-in only if using animation
+        if(useFadeAnimation)
+            yield return new WaitForSeconds(fadeDuration);
+
+        // Type out the text
+        foreach (char letter in textToType)
+        {
+            textUI.text += letter;
+            yield return new WaitForSeconds(typingSpeed);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // Clean up DOTween tweens
+        if (canvasGroup != null)
+            DOTween.Kill(canvasGroup);
+    }
+    
+    // --- Editor Test Button ---
+
+    #if UNITY_EDITOR
+    [Button("Test Dialogue", EButtonEnableMode.Playmode)]
+    private void TestDialogue()
+    {
+        // Ensure canvas group is set if we're testing in-editor
+        if (canvasGroup == null && useFadeAnimation && textUI != null)
+        {
+            Awake();
+        }
+        
+        StartDialogue();
+    }
+    #endif
+}

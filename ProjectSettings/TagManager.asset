@@ -7,7 +7,7 @@ TagManager:
   - Grass
   - Wood
   - Oil
-  - Road
+  - Concrete
   layers:
   - Default
   - TransparentFX

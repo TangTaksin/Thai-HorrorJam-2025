@@ -1,38 +1,75 @@
 using UnityEngine;
 using UnityEngine.Events;
-using System.Collections; // << ต้องมี เพื่อใช้ Coroutine
+using System.Collections;
+using System.Collections.Generic; // << (ใหม่!) ต้องมีเพื่อใช้ List<>
+using NaughtyAttributes; 
+
+// (ใหม่!) สร้าง Class สำหรับเก็บ Event ที่มีดีเลย์
+[System.Serializable] // << ทำให้มันโชว์ใน Inspector
+public class DelayedEvent
+{
+    [Tooltip("หน่วงเวลากี่วินาที *ก่อน* ที่ Event นี้จะเริ่มทำงาน")]
+    [MinValue(0f)]
+    public float delay = 0f;
+    
+    [Tooltip("Event ที่จะให้ทำงาน")]
+    public UnityEvent action;
+}
+
 
 public class InteractionTrigger : MonoBehaviour
 {
-    [Header("การตั้งค่า Interaction")]
+    [BoxGroup("1. Interaction Settings")]
     [Tooltip("แท็กของ Object ที่จะให้ Trigger ทำงาน (ปกติคือ 'Player')")]
     public string triggerTag = "Player";
+    
+    [BoxGroup("1. Interaction Settings")]
     [Tooltip("ปุ่มที่ใช้กด (เช่น F, E)")]
     public KeyCode interactionKey = KeyCode.F;
 
-    // --- (ใหม่!) ---
-    [Tooltip("เวลาหน่วง (วินาที) ก่อนที่จะกดซ้ำได้ (แก้การกดรัว)")]
-    public float interactionCooldown = 1.0f;
-    // --- (จบส่วนใหม่) ---
-
-    [Header("สถานะการล็อค")]
+    [BoxGroup("1. Interaction Settings")]
     [Tooltip("ติ๊กถูก ถ้าต้องการให้ Trigger นี้ 'เริ่มเกมมาแบบล็อค' (ต้องมีคนมาสั่งปลดล็อค)")]
     public bool startLocked = true;
 
-    [Header("Events")]
-    [Tooltip("Event ที่จะทำงานเมื่อกด 'สำเร็จ' (ถ้ามันปลดล็อคอยู่)")]
-    public UnityEvent onInteractSuccess;
+    
+    [BoxGroup("2. Delay & Cooldown")]
+    [Tooltip("หน่วงเวลาก่อนที่ 'Success Sequence' *ทั้งหมด* จะเริ่มทำงาน")]
+    [MinValue(0f)]
+    public float preInteractionDelay = 0f; // << ดีเลย์ "ก่อน" เริ่มทั้งขบวน
+
+    [BoxGroup("2. Delay & Cooldown")]
+    [Tooltip("หน่วงเวลาก่อนที่ 'Fail Event' จะทำงาน")]
+    [MinValue(0f)]
+    public float preFailureDelay = 0f;
+
+    [BoxGroup("2. Delay & Cooldown")]
+    [Tooltip("เวลาหน่วง (วินาที) ก่อนที่จะกด 'สำเร็จ' ซ้ำได้")]
+    [MinValue(0f)]
+    public float interactionCooldown = 1.0f;
+    
+
+    // --- (อัปเกรด!) ---
+    [BoxGroup("3. Success Events (ทำงานเรียงลำดับ)")]
+    [ReorderableList] // << ทำให้ List นี้จัดลำดับได้ใน Inspector
+    public List<DelayedEvent> onInteractSuccessList; // << เปลี่ยนจาก UnityEvent เดียวเป็น List
+    // --- (จบส่วนอัปเกรด) ---
+
+    
+    [BoxGroup("4. Fail Event (ทำงานครั้งเดียว)")]
     [Tooltip("Event ที่จะทำงานเมื่อกด 'ล้มเหลว' (ถ้ามันยังล็อคอยู่)")]
     public UnityEvent onInteractFail;
 
-    // --- ตัวแปรภายใน ---
-    private bool isPlayerInside = false;
-    [SerializeField] private bool isUnlocked = false; // ตัวแปรสถานะการล็อค
-    private bool isBusy = false; // (ใหม่!) ตัวแปรกันการกดรัว
+    
+    [BoxGroup("5. Debug State")]
+    [ReadOnly] private bool isPlayerInside = false;
+    [ReadOnly] [SerializeField] private bool isUnlocked = false; 
+    [ReadOnly] private bool isBusy = false; 
+    [ReadOnly] private bool isCheckingFail = false; 
 
+    // (ส่วน Awake, OnTriggerEnter, OnTriggerExit, Update ... ยังเหมือนเดิมทุกอย่าง)
+    #region "Core Logic (No Change)"
     private void Awake()
     {
-        // ตั้งค่าสถานะเริ่มต้น
         isUnlocked = !startLocked;
     }
 
@@ -56,60 +93,99 @@ public class InteractionTrigger : MonoBehaviour
     {
         if (isPlayerInside && Input.GetKeyDown(interactionKey))
         {
-            AttemptInteraction(); // ลองทำงาน
+            AttemptInteraction(); 
         }
     }
+    #endregion
 
     private void AttemptInteraction()
     {
-        // (แก้ไข!) เช็คว่า 'isUnlocked' และ 'ไม่ Busy'
         if (isUnlocked && !isBusy)
         {
-            // ---- สำเร็จ ----
-
-            // (สำคัญ!) 1. ตั้งค่า 'Busy' *ก่อน* สั่ง Invoke()
-            // เผื่อว่า Event นี้สั่งย้าย Scene หรือทำลาย Object นี้
-            isBusy = true;
-
-            Debug.Log("Interaction สำเร็จ!");
-
-            // 2. สั่งทำงาน Event
-            onInteractSuccess.Invoke();
-
-            // 3. สั่งเริ่ม Cooldown
-            // (ถ้า Invoke ข้างบนสั่งย้าย Scene บรรทัดนี้จะไม่ทำงาน...
-            // ...ซึ่งก็ไม่เป็นไร เพราะ Object นี้กำลังจะถูกทำลายอยู่แล้ว)
-            StartCoroutine(CooldownRoutine());
+            isBusy = true; 
+            StartCoroutine(SuccessRoutine()); // << (เรียก Coroutine ที่อัปเกรดแล้ว)
         }
-        else if (!isUnlocked)
+        else if (!isUnlocked && !isCheckingFail)
         {
-            // ---- ล้มเหลว (ล็อค) ----
-            Debug.Log("Interaction ล้มเหลว! ประตูยังล็อคอยู่");
-            onInteractFail.Invoke();
+            StartCoroutine(FailRoutine());
         }
-        // (ถ้า 'isBusy' อยู่, การกด F จะไม่ทำอะไรเลย)
     }
 
     /// <summary>
-    /// (ใหม่!) Coroutine สำหรับนับ Cooldown
+    /// (อัปเกรด!) Coroutine นี้จะวนลูปทำงาน Event ทีละตัวตาม List
+    /// </summary>
+    private IEnumerator SuccessRoutine()
+    {
+        Debug.Log("Interaction กำลังเริ่ม (รอ pre-delay)...");
+
+        // 1. รอ "ดีเลย์เริ่มต้น" (ถ้ามี)
+        if (preInteractionDelay > 0f)
+            yield return new WaitForSeconds(preInteractionDelay);
+
+        Debug.Log("เริ่มทำงาน Success Sequence...");
+
+        // 2. วนลูป Event ทั้งหมดใน List
+        foreach (DelayedEvent delayedEvent in onInteractSuccessList)
+        {
+            // 2a. รอ "ดีเลย์คั่น" ที่กำหนดไว้ในแต่ละ Event
+            if (delayedEvent.delay > 0f)
+                yield return new WaitForSeconds(delayedEvent.delay);
+
+            // 2b. สั่งทำงาน Event
+            if (delayedEvent.action != null)
+            {
+                Debug.Log("Invoking delayed event...");
+                delayedEvent.action.Invoke();
+            }
+        }
+
+        Debug.Log("Success Sequence จบแล้ว, เริ่ม Cooldown...");
+
+        // 3. สั่งเริ่ม Cooldown 'หลัง' ทำงาน (เมื่อทุกอย่างใน List ทำเสร็จแล้ว)
+        StartCoroutine(CooldownRoutine());
+    }
+
+    /// <summary>
+    /// (ยังเหมือนเดิม) Coroutine สำหรับการกดล้มเหลว
+    /// </summary>
+    private IEnumerator FailRoutine()
+    {
+        isCheckingFail = true; 
+
+        if (preFailureDelay > 0f)
+            yield return new WaitForSeconds(preFailureDelay);
+
+        Debug.Log("Interaction ล้มเหลว! ประตูยังล็อคอยู่");
+        onInteractFail.Invoke();
+
+        isCheckingFail = false; 
+    }
+
+
+    /// <summary>
+    /// (ยังเหมือนเดิม) Coroutine สำหรับนับ Cooldown
     /// </summary>
     private IEnumerator CooldownRoutine()
     {
-        // รอตามเวลาที่ตั้งค่าไว้ใน Inspector
         yield return new WaitForSeconds(interactionCooldown);
-
-        // เมื่อครบเวลา, รีเซ็ตสถานะ 'Busy'
         isBusy = false;
     }
 
 
     /// <summary>
-    /// (PUBLIC) Function ที่สำคัญที่สุด!
-    /// เอาไว้ให้ Script อื่น (เช่น ถังน้ำมัน) เรียกใช้เพื่อ 'ปลดล็อค' Trigger นี้
+    /// (ยังเหมือนเดิม) Public Functions สำหรับ ปลดล็อค/ล็อค
     /// </summary>
+    [Button("Test Unlock", EButtonEnableMode.Playmode)] 
     public void Unlock()
     {
         isUnlocked = true;
         Debug.Log(name + " ถูกปลดล็อคแล้ว!");
+    }
+
+    [Button("Test Lock", EButtonEnableMode.Playmode)] 
+    public void Lock()
+    {
+        isUnlocked = false;
+        Debug.Log(name + " ถูกล็อค!");
     }
 }

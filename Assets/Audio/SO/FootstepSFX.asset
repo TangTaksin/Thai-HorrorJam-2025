@@ -31,6 +31,13 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 41e594d4a372eed40a473302103092d2, type: 3}
     - {fileID: 8300000, guid: 3b8ae6caa5886e94d8e9f547e47d098d, type: 3}
     - {fileID: 8300000, guid: cbe97d97c687b074699cc405d9bc7d83, type: 3}
+  - surface: 1
+    clips:
+    - {fileID: 8300000, guid: c99630a7929f1394dacd56b7c4797002, type: 3}
+    - {fileID: 8300000, guid: 7980eea172fe5b14cb3a1638f16e8abc, type: 3}
+    - {fileID: 8300000, guid: 67b7a742ddb02e94dba8768fac221a07, type: 3}
+    - {fileID: 8300000, guid: 549408a3f41d49b488c8fd5f3a80d56d, type: 3}
+    - {fileID: 8300000, guid: b3915963c50b3d94c90f22de7ebff76a, type: 3}
   minStepDelay: 0.706
   maxStepDelay: 0.862
   pitchVariation: 0.1

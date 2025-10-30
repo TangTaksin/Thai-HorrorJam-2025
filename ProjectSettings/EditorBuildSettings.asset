@@ -12,11 +12,11 @@ EditorBuildSettings:
     path: Assets/_Scenes/TerrainDemo.unity
     guid: 975c10e76885b694ab5c35a001635370
   - enabled: 1
+    path: Assets/_Scenes/EndScene.unity
+    guid: 685db32010a2bd747aa72180ade70e05
+  - enabled: 1
     path: Assets/_Scenes/InspectionScene.unity
     guid: a116c050c56e4f64f871e04bcf570f24
-  - enabled: 1
-    path: Assets/_Scenes/SettingsDEmo.unity
-    guid: e2cbfc5c00b6b5647b59bd9aeff6b462
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
