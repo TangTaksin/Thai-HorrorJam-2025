@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,7 +14,11 @@ public class FPInteract : MonoBehaviour
     [Tooltip("ลาก Crosshair Controller มาใส่ (เพื่อดึงค่า Settings)")]
     [SerializeField] private CrosshairController crosshairController;
 
-    public IInteractable DetectedInteractable { get; private set; }
+    public IInteractable DetectedInteractable 
+    {
+        get;
+        private set;
+    }
 
     private RaycastHit currentHitInfo;
     private bool hasHitInfo;
@@ -22,6 +27,8 @@ public class FPInteract : MonoBehaviour
 
     private Transform _cam_transform;
     private PlayerControls controls;
+
+    public static Action<IInteractable> OnDetectedInteractableChanged;
 
     private void Awake()
     {
@@ -66,9 +73,12 @@ public class FPInteract : MonoBehaviour
                 if (currentHitInfo.collider.TryGetComponent<IInteractable>(out var interactable))
                 {
                     DetectedInteractable = interactable;
+                    
                 }
             }
         }
+        
+        OnDetectedInteractableChanged?.Invoke(DetectedInteractable);
     }
 
     void Interact(InputAction.CallbackContext context)
