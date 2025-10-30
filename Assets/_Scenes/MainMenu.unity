@@ -1033,7 +1033,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 8400000, guid: b2dbb0651ef396e4eb802bacfc29d098, type: 2}
+  m_TargetTexture: {fileID: 8400000, guid: 6bfb2ba26fa18894ca61b658838257a3, type: 2}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
@@ -1103,7 +1103,7 @@ MonoBehaviour:
   m_IsGlobal: 1
   priority: 1
   blendDistance: 0
-  weight: 1
+  weight: 0.815
   sharedProfile: {fileID: 11400000, guid: 10fc4df2da32a41aaa32d77bc913491c, type: 2}
 --- !u!4 &451249537
 Transform:
@@ -4861,12 +4861,20 @@ PrefabInstance:
       value: -3
       objectReference: {fileID: 0}
     - target: {fileID: 6980997054624064651, guid: a0df3cb97ed91314981c6be09ea1c79b, type: 3}
+      propertyPath: m_Texture
+      value: 
+      objectReference: {fileID: 8400000, guid: 6bfb2ba26fa18894ca61b658838257a3, type: 2}
+    - target: {fileID: 6980997054624064651, guid: a0df3cb97ed91314981c6be09ea1c79b, type: 3}
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8044817112105106638, guid: a0df3cb97ed91314981c6be09ea1c79b, type: 3}
       propertyPath: m_Name
       value: DitheringCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 8044817112105106638, guid: a0df3cb97ed91314981c6be09ea1c79b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8974475563865894216, guid: a0df3cb97ed91314981c6be09ea1c79b, type: 3}
       propertyPath: m_Pivot.x
@@ -7357,7 +7365,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 2015
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 8400000, guid: b2dbb0651ef396e4eb802bacfc29d098, type: 2}
+  m_TargetTexture: {fileID: 8400000, guid: 6bfb2ba26fa18894ca61b658838257a3, type: 2}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
