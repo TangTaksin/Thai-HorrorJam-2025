@@ -13,6 +13,15 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.rtwarner.ditherdown-urp": {
+      "version": "https://github.com/ryantwarner/ditherdown-urp.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.render-pipelines.universal": "17.0.0"
+      },
+      "hash": "270335fd43459b79980f97f6be2420582bb861f0"
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
