@@ -73,15 +73,15 @@ public class InteractionTrigger : MonoBehaviour
     private void Awake()
     {
         isUnlocked = !startLocked;
-        
+
         // (ใหม่!) ทำการ Cache WaitForSeconds เพื่อลด GC Allocations
         // เราเช็ก > 0f เพื่อไม่ให้สร้าง object ถ้าไม่จำเป็น
         if (preInteractionDelay > 0f)
             _preInteractionYield = new WaitForSeconds(preInteractionDelay);
-            
+
         if (preFailureDelay > 0f)
             _preFailureYield = new WaitForSeconds(preFailureDelay);
-            
+
         if (interactionCooldown > 0f)
             _cooldownYield = new WaitForSeconds(interactionCooldown);
     }
@@ -126,7 +126,7 @@ public class InteractionTrigger : MonoBehaviour
         }
 
         // ถ้าไม่ยุ่ง ให้ล็อคทันที
-        isBusy = true; 
+        isBusy = true;
 
         if (isUnlocked)
         {
@@ -142,12 +142,16 @@ public class InteractionTrigger : MonoBehaviour
 
     public void CallReturnToMenu()
     {
+        GameManager.Instance.ChangeState(GameState.MainMenu);
         if (GameSceneManager.Instance != null)
         {
-            
+            GameManager.Instance.ChangeState(GameState.MainMenu);
+            Cursor.lockState = CursorLockMode.None;   // <--- นี่ไงครับ
+            Cursor.visible = true;
+
             Debug.Log("Wrapper: กำลังเรียก ReturnToMenu() จาก Instance...");
             GameSceneManager.Instance.ReturnToMenu();
-            
+
         }
         else
         {
@@ -157,6 +161,7 @@ public class InteractionTrigger : MonoBehaviour
 
     public void CallLoadNextLevel(string name)
     {
+        GameManager.Instance.ChangeState(GameState.Playing);
         if (GameSceneManager.Instance != null)
         {
             Debug.Log("Wrapper: กำลังเรียก LoadNextLevel() จาก Instance...");
