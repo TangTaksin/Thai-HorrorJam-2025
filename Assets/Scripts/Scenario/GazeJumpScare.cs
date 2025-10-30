@@ -12,10 +12,10 @@ public class GazeJumpScare : MonoBehaviour
     [Header("Gaze Settings")]
     [Tooltip("ต้องจ้องมองนานกี่วินาที (เช่น 3)")]
     [SerializeField] private float gazeDuration = 3f;
-    
+
     [Tooltip("ระยะทางสูงสุดที่การจ้องมองจะทำงาน")]
     [SerializeField] private float maxGazeDistance = 50f;
-    
+
     [Tooltip("ความแม่นยำ (0.9 = ต้องจ้องเกือบกลางจอ, 0.5 = จ้องเฉียดๆ ก็นับ)")]
     [Range(0.1f, 1.0f)]
     [SerializeField] private float gazeAccuracy = 0.8f;
@@ -55,7 +55,7 @@ public class GazeJumpScare : MonoBehaviour
         {
             // 1. ถ้าผู้เล่นกำลังจ้อง: เริ่มนับเวลา
             gazeTimer += Time.deltaTime;
-            
+
             // (Optional) แสดง Debug
             // Debug.Log($"Gazing... {gazeTimer:F1} / {gazeDuration}");
 
@@ -65,7 +65,7 @@ public class GazeJumpScare : MonoBehaviour
                 hasTriggered = true;
                 gazeTimer = 0f;
                 Debug.Log("Gaze Triggered! Firing JumpScare.");
-                
+
                 // ไปเรียก Function 'TriggerJumpScare' ของ Manager ตัวหลัก
                 jumpScareManager.TriggerJumpScare();
             }
@@ -86,7 +86,7 @@ public class GazeJumpScare : MonoBehaviour
         // (นี่เป็นการเช็คคร่าวๆ ที่เร็วมาก)
         Bounds objectBounds = new Bounds(transform.position, Vector3.one * objectSizeForCheck);
         cameraPlanes = GeometryUtility.CalculateFrustumPlanes(mainCamera);
-        
+
         if (!GeometryUtility.TestPlanesAABB(cameraPlanes, objectBounds))
         {
             return false; // อยู่นอกจอโดยสิ้นเชิง
@@ -95,11 +95,11 @@ public class GazeJumpScare : MonoBehaviour
         // --- เช็คที่ 2: ผู้เล่นหันหน้าไปทางวัตถุนี้ "ตรงๆ" หรือไม่? (Dot Product) ---
         Vector3 directionToObject = (transform.position - mainCamera.transform.position).normalized;
         float dot = Vector3.Dot(mainCamera.transform.forward, directionToObject);
-        
+
         // ถ้าค่า dot ต่ำกว่า 'gazeAccuracy' = ผู้เล่นมองเฉียดๆ (อยู่ขอบจอ)
-        if (dot < gazeAccuracy) 
+        if (dot < gazeAccuracy)
         {
-            return false; 
+            return false;
         }
 
         // --- เช็คที่ 3: มีอะไรบังระหว่างกล้องกับวัตถุหรือไม่? (Raycast) ---
@@ -123,7 +123,13 @@ public class GazeJumpScare : MonoBehaviour
     /// </summary>
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = new Color(1, 0, 1, 0.5f); // สีม่วง
+        // วาดขอบเขต (Bounds) ที่ใช้เช็ค (สีม่วง)
+        Gizmos.color = new Color(1, 0, 1, 0.5f);
         Gizmos.DrawWireCube(transform.position, Vector3.one * objectSizeForCheck);
+
+        // === โค้ดที่เพิ่มเข้ามา ===
+        // วาดระยะการจ้องมองสูงสุด (maxGazeDistance) (สีเหลือง)
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, maxGazeDistance);
     }
 }

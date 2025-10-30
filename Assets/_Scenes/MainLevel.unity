@@ -720,23 +720,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InteractionTrigger
   triggerTag: Player
   interactionKey: 102
-  interactionCooldown: 1
   startLocked: 1
-  onInteractSuccess:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 594063352}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  preInteractionDelay: 0
+  preFailureDelay: 0
+  interactionCooldown: 1
+  onInteractSuccessList: []
   onInteractFail:
     m_PersistentCalls:
       m_Calls: []
@@ -14862,23 +14850,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InteractionTrigger
   triggerTag: Player
   interactionKey: 102
-  interactionCooldown: 5
   startLocked: 1
-  onInteractSuccess:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 893407862}
-        m_TargetAssemblyTypeName: SOAudioManager, Assembly-CSharp
-        m_MethodName: PlaySFX
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 11400000, guid: a206c74a638b4c44bb31f91029b0fb27, type: 2}
-          m_ObjectArgumentAssemblyTypeName: AudioEvent, Assembly-CSharp
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  preInteractionDelay: 0
+  preFailureDelay: 0
+  interactionCooldown: 5
+  onInteractSuccessList: []
   onInteractFail:
     m_PersistentCalls:
       m_Calls:
@@ -15160,7 +15136,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1027470471490814773, guid: 2d7bb16cc8e157644b7b0a2579886178, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 12.3
+      value: 12.08
       objectReference: {fileID: 0}
     - target: {fileID: 1027470471490814773, guid: 2d7bb16cc8e157644b7b0a2579886178, type: 3}
       propertyPath: m_LocalPosition.y
