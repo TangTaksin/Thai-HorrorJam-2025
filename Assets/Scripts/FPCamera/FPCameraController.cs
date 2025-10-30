@@ -68,6 +68,7 @@ public class FPCameraController : MonoBehaviour
         controls.Player.Look.canceled += OnLookCanceled;
 
         UISettingsManager.OnSettingApplied += ApplySetting;
+        GameManager.OnStateChanged += HandleGameStateChange;
     }
 
     private void OnDisable()
@@ -76,6 +77,7 @@ public class FPCameraController : MonoBehaviour
         controls.Player.Look.canceled -= OnLookCanceled;
 
         UISettingsManager.OnSettingApplied -= ApplySetting;
+        GameManager.OnStateChanged -= HandleGameStateChange;
 
         controls.Disable();
     }
@@ -89,6 +91,15 @@ public class FPCameraController : MonoBehaviour
     public void HandlePause(bool isPlaying)
     {
         canInput = isPlaying;
+    }
+
+    private void HandleGameStateChange(GameState newState)
+    {
+        // ตรวจสอบว่า State ใหม่คือ 'Playing' หรือไม่
+        bool isPlaying = (newState == GameState.Playing);
+
+        // สั่งเปิด/ปิดการรับ Input โดยใช้ฟังก์ชันที่เรามีอยู่แล้ว!
+        HandlePause(isPlaying);
     }
 
     private void InitializeCamera()
@@ -126,6 +137,10 @@ public class FPCameraController : MonoBehaviour
     void Start()
     {
         ResetView();
+        if (GameManager.Instance != null)
+        {
+            HandleGameStateChange(GameManager.Instance.CurrentState);
+        }
     }
 
     private void Update()

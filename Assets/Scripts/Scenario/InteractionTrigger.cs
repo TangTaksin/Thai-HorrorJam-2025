@@ -144,9 +144,10 @@ public class InteractionTrigger : MonoBehaviour
     {
         if (GameSceneManager.Instance != null)
         {
+            
             Debug.Log("Wrapper: กำลังเรียก ReturnToMenu() จาก Instance...");
             GameSceneManager.Instance.ReturnToMenu();
-            GameManager.Instance.ChangeState(GameState.MainMenu);
+            
         }
         else
         {
@@ -166,6 +167,8 @@ public class InteractionTrigger : MonoBehaviour
             Debug.LogError("หา GameSceneManager.Instance ไม่เจอ!");
         }
     }
+
+
 
     /// <summary>
     /// (ปรับปรุง!) ยุบ CooldownRoutine มารวมที่นี่

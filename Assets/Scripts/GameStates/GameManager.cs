@@ -38,7 +38,10 @@ public class GameManager : MonoBehaviour
         if (CurrentState == newState)
             return;
 
-        lastState = CurrentState;
+        if (CurrentState == GameState.Playing || CurrentState == GameState.MainMenu)
+        {
+            lastState = CurrentState;
+        }
         CurrentState = newState;
 
         switch (CurrentState)
@@ -61,7 +64,7 @@ public class GameManager : MonoBehaviour
             case GameState.Inspect:
                 Time.timeScale = 0f;
 
-                Cursor.lockState = CursorLockMode.Confined;
+                Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
                 break;
 

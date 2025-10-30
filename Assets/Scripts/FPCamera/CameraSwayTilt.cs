@@ -238,7 +238,7 @@ public class CameraSwayTilt : MonoBehaviour
         lookVelocity *= velocityDamping;
 
         // Final application
-        transform.localRotation = initialRotation * currentSway * currentTilt * currentHeadTilt;
+        // transform.localRotation = initialRotation * currentSway * currentTilt * currentHeadTilt;
         transform.localPosition = initialPosition + currentPeekOffset;
     }
 

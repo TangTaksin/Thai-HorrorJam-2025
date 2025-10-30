@@ -101,6 +101,7 @@ public class UISettingsManager : MonoBehaviour
     public void ToggleSettingsPanel()
     {
         if (isAnimating) return;
+        isAnimating = true;
 
         isPanelOpen = !isPanelOpen;
 
@@ -112,74 +113,177 @@ public class UISettingsManager : MonoBehaviour
 
     public void OpenSettingsPanel()
     {
-        if (settingsPanel == null || animator == null) return;
+        // if (settingsPanel == null || animator == null) return;
 
-        Debug.Log("Opening Settings Panel...");
+        // Debug.Log("Opening Settings Panel...");
 
-        // 🟢 ทำให้อนิเมชันเล่นแม้ Time.timeScale = 0
-        settingsPanel.SetActive(true);
-        animator.updateMode = AnimatorUpdateMode.UnscaledTime;
-        animator.SetTrigger("Open");
-        GameManager.Instance?.ChangeState(GameState.Paused);
+        // // 🟢 ทำให้อนิเมชันเล่นแม้ Time.timeScale = 0
+        // settingsPanel.SetActive(true);
+        // animator.updateMode = AnimatorUpdateMode.UnscaledTime;
+        // animator.SetTrigger("Open");
+        // GameManager.Instance?.ChangeState(GameState.Paused);
+        if (settingsPanel == null || animator == null)
+        {
+            isAnimating = false; // ป้องกันการค้าง
+            return;
+        }
+
+        // เรียกใช้ Coroutine แทน
+        StartCoroutine(OpenAnimationCoroutine());
     }
 
     public void CloseSettingsPanel()
     {
-        if (animator == null || settingsPanel == null) return;
+        // if (animator == null || settingsPanel == null) return;
 
-        Debug.Log("Closing Settings Panel...");
+        // Debug.Log("Closing Settings Panel...");
 
-        // 🟢 ทำให้อนิเมชันเล่นแม้ Time.timeScale = 0
-        animator.updateMode = AnimatorUpdateMode.UnscaledTime;
-        animator.SetTrigger("Close");
-        GameManager.Instance?.ExitPause();
+        // // 🟢 ทำให้อนิเมชันเล่นแม้ Time.timeScale = 0
+        // animator.updateMode = AnimatorUpdateMode.UnscaledTime;
+        // animator.SetTrigger("Close");
+        // GameManager.Instance?.ExitPause();
+        // GameManager.Instance?.ChangeState(GameState.Playing);
+        if (animator == null || settingsPanel == null)
+        {
+            isAnimating = false; // ป้องกันการค้าง
+            return;
+        }
+
+        // เรียกใช้ Coroutine แทน
+        StartCoroutine(CloseAnimationCoroutine());
     }
 
-    private IEnumerator WaitForOpenAnimation()
+    private IEnumerator OpenAnimationCoroutine()
     {
+        Debug.Log("Opening Settings Panel...");
+
+        settingsPanel.SetActive(true);
+        animator.updateMode = AnimatorUpdateMode.UnscaledTime;
+        animator.SetTrigger("Open");
+        GameManager.Instance?.ChangeState(GameState.Paused);
+
         int layer = 0;
         yield return null;
 
+        Debug.Log("Waiting for Open state...");
         yield return new WaitUntil(() =>
         {
             var cur = animator.GetCurrentAnimatorStateInfo(layer);
             var next = animator.GetNextAnimatorStateInfo(layer);
             return cur.IsName(OpenStateName) || next.IsName(OpenStateName);
         });
+        Debug.Log("...Found Open state!");
 
+        Debug.Log("Waiting for transition to end...");
         yield return new WaitWhile(() => animator.IsInTransition(layer));
-        yield return new WaitWhile(() => animator.GetCurrentAnimatorStateInfo(layer).normalizedTime < 1f);
+        Debug.Log("...Transition ended!");
 
-        isAnimating = false;
+        // --- 🔴 นี่คือส่วนที่แก้ไข 🔴 ---
+        Debug.Log("Waiting for animation to finish...");
+        // เราจะรอตราบใดที่ State ยังเป็น "Open" และเวลา animation ยังไม่ถึง 1 (ยังเล่นไม่จบ)
+        while (animator.GetCurrentAnimatorStateInfo(layer).IsName(OpenStateName) &&
+          animator.GetCurrentAnimatorStateInfo(layer).normalizedTime < 1.0f)
+        {
+            // รอเฟรมถัดไป
+            yield return null;
+        }
+        Debug.Log("...Animation finished or state changed!");
+        // -------------------------------
+
+        isAnimating = false; // ปลดล็อคให้กดปุ่มได้
         isPanelOpen = true;
         Debug.Log("✅ Open animation finished");
-        GameManager.Instance.ChangeState(GameState.Paused);
     }
 
-    private IEnumerator DeactivatePanelAfterAnimation()
+    private IEnumerator CloseAnimationCoroutine()
     {
+        Debug.Log("Closing Settings Panel...");
+
+        animator.updateMode = AnimatorUpdateMode.UnscaledTime;
+        animator.SetTrigger("Close");
+
+        // --- 🔴 นี่คือจุดที่แก้ไข 🔴 ---
+        // เราต้องเรียกทั้งสองคำสั่งนี้ (เหมือนที่โค้ดเดิมของคุณเคยทำ)
+        GameManager.Instance?.ExitPause();
+        GameManager.Instance?.ChangeState(GameState.Playing);
+        // --------------------------------
+
         int layer = 0;
         yield return null;
 
+        Debug.Log("Waiting for Close state...");
         yield return new WaitUntil(() =>
         {
             var cur = animator.GetCurrentAnimatorStateInfo(layer);
             var next = animator.GetNextAnimatorStateInfo(layer);
             return cur.IsName(CloseStateName) || next.IsName(CloseStateName);
         });
+        Debug.Log("...Found Close state!");
 
+        Debug.Log("Waiting for transition to end...");
         yield return new WaitWhile(() => animator.IsInTransition(layer));
-        yield return new WaitWhile(() => animator.GetCurrentAnimatorStateInfo(layer).normalizedTime < 1f);
+        Debug.Log("...Transition ended!");
+
+        Debug.Log("Waiting for animation to finish...");
+        while (animator.GetCurrentAnimatorStateInfo(layer).IsName(CloseStateName) &&
+               animator.GetCurrentAnimatorStateInfo(layer).normalizedTime < 1.0f)
+        {
+            yield return null;
+        }
+        Debug.Log("...Animation finished or state changed!");
 
         settingsPanel.SetActive(false);
-        animator.enabled = false;
-        animator.SetBool("IsOpen", false);
         isPanelOpen = false;
-        isAnimating = false;
+        isAnimating = false; // ปลดล็อคให้กดปุ่มได้
 
         Debug.Log("✅ Close animation finished and panel deactivated");
-        GameManager.Instance?.ExitPause();
     }
+
+    // private IEnumerator WaitForOpenAnimation()
+    // {
+    //     int layer = 0;
+    //     yield return null;
+
+    //     yield return new WaitUntil(() =>
+    //     {
+    //         var cur = animator.GetCurrentAnimatorStateInfo(layer);
+    //         var next = animator.GetNextAnimatorStateInfo(layer);
+    //         return cur.IsName(OpenStateName) || next.IsName(OpenStateName);
+    //     });
+
+    //     yield return new WaitWhile(() => animator.IsInTransition(layer));
+    //     yield return new WaitWhile(() => animator.GetCurrentAnimatorStateInfo(layer).normalizedTime < 1f);
+
+    //     isAnimating = false;
+    //     isPanelOpen = true;
+    //     Debug.Log("✅ Open animation finished");
+    //     GameManager.Instance.ChangeState(GameState.Paused);
+    // }
+
+    // private IEnumerator DeactivatePanelAfterAnimation()
+    // {
+    //     int layer = 0;
+    //     yield return null;
+
+    //     yield return new WaitUntil(() =>
+    //     {
+    //         var cur = animator.GetCurrentAnimatorStateInfo(layer);
+    //         var next = animator.GetNextAnimatorStateInfo(layer);
+    //         return cur.IsName(CloseStateName) || next.IsName(CloseStateName);
+    //     });
+
+    //     yield return new WaitWhile(() => animator.IsInTransition(layer));
+    //     yield return new WaitWhile(() => animator.GetCurrentAnimatorStateInfo(layer).normalizedTime < 1f);
+
+    //     settingsPanel.SetActive(false);
+    //     animator.enabled = false;
+    //     animator.SetBool("IsOpen", false);
+    //     isPanelOpen = false;
+    //     isAnimating = false;
+
+    //     Debug.Log("✅ Close animation finished and panel deactivated");
+    //     GameManager.Instance?.ExitPause();
+    // }
 
     // ================== SETTINGS LOGIC ====================
 

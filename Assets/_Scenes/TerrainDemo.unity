@@ -1485,6 +1485,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 640210243380398545, guid: d0c5be701a5aa9b4c92a823d21ec8b67, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 640210243380398545, guid: d0c5be701a5aa9b4c92a823d21ec8b67, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 0}
@@ -1503,6 +1507,10 @@ PrefabInstance:
     - target: {fileID: 669182317403893256, guid: d0c5be701a5aa9b4c92a823d21ec8b67, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 947764474498932591, guid: d0c5be701a5aa9b4c92a823d21ec8b67, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 947764474498932591, guid: d0c5be701a5aa9b4c92a823d21ec8b67, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
@@ -1571,6 +1579,10 @@ PrefabInstance:
     - target: {fileID: 2279915890196431766, guid: d0c5be701a5aa9b4c92a823d21ec8b67, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2505711122994126248, guid: d0c5be701a5aa9b4c92a823d21ec8b67, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2505711122994126248, guid: d0c5be701a5aa9b4c92a823d21ec8b67, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
@@ -11166,6 +11178,18 @@ MonoBehaviour:
             m_StringArgument: EndScene
             m_BoolArgument: 0
           m_CallState: 0
+        - m_Target: {fileID: 425155880}
+          m_TargetAssemblyTypeName: GameSceneManager, Assembly-CSharp
+          m_MethodName: LoadSceneAsync
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: EndScene
+            m_BoolArgument: 0
+          m_CallState: 0
   onInteractFail:
     m_PersistentCalls:
       m_Calls: []
@@ -12609,10 +12633,6 @@ PrefabInstance:
       propertyPath: crosshairController
       value: 
       objectReference: {fileID: 1788486758}
-    - target: {fileID: 9008000581178230078, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

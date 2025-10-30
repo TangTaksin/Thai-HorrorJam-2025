@@ -402,7 +402,7 @@ MonoBehaviour:
   mouseSwayAmount: 4
   mouseSwaySmooth: 8
   mouseSwayMaxSpeed: 15
-  enableSway: 1
+  enableSway: 0
   moveTiltAmount: 2
   moveTiltSmooth: 8
   enableTilt: 1
@@ -415,7 +415,7 @@ MonoBehaviour:
   wallCheckInterval: 0.1
   wallLayers:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 384
   wallReductionFactor: 0.25
   useAdaptiveSmoothing: 1
   swayResponseCurve:
@@ -1102,7 +1102,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &479585692081257618
 Transform:
   m_ObjectHideFlags: 0
