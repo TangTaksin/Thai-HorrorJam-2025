@@ -8,7 +8,53 @@ public class GameManager : MonoBehaviour
     public GameState CurrentState { get; private set; }
     GameState lastState;
 
+    bool _haveflashlight;
+    public bool haveflashlight 
+    { 
+        get 
+        { 
+            return _haveflashlight; 
+        }
+        set 
+        {
+            if (value != _haveflashlight)
+            {
+                _haveflashlight = value;
+                OnVariableUpdate?.Invoke();
+            }
+        } 
+    }
+
+    bool _haveSprayCan;
+    public bool haveSprayCan
+    {
+        get { return _haveSprayCan; }
+        set 
+        {
+            if (value != _haveSprayCan)
+            {
+                _haveSprayCan = value;
+                OnVariableUpdate?.Invoke();
+            }
+        }
+    }
+
+    int _gasCount;
+    public int gasCount
+    {
+        get { return _gasCount; }
+        set
+        {
+            if (value != gasCount)
+            {
+                gasCount = value;
+                OnVariableUpdate?.Invoke();
+            }
+        }
+    }
+
     public static Action<GameState> OnStateChanged;
+    public static Action OnVariableUpdate;
 
     private void Awake()
     {

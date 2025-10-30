@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class ItemObject : MonoBehaviour, IInteractable
 {
@@ -8,6 +9,9 @@ public class ItemObject : MonoBehaviour, IInteractable
 
     MeshFilter meshFilter;
     MeshRenderer meshRenderer;
+
+    public UnityEvent OnInspectorOpen;
+    public UnityEvent OnInspectorClose;
 
     private void Start()
     {
@@ -20,11 +24,24 @@ public class ItemObject : MonoBehaviour, IInteractable
         return (meshFilter, meshRenderer);
     }
 
-    public void Interact(GameObject interacter)
+    public virtual void Interact(GameObject interacter)
     {
         print(interacter.name + " attempted to interact with " + gameObject.name);
 
         InspectionManager.instance?.CallInspector(this);
-        
+        InspectionManager.InspectorLoaded += OnInspectorOpened;
+        InspectionManager.InspectorClosed += OnInspectorClosed;
+    }
+
+    void OnInspectorOpened(ItemObject item)
+    {
+        OnInspectorOpen?.Invoke();
+        InspectionManager.InspectorLoaded -= OnInspectorOpened;
+    }
+
+    void OnInspectorClosed()
+    {
+        OnInspectorClose?.Invoke();
+        InspectionManager.InspectorClosed -= OnInspectorClosed;
     }
 }

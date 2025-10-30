@@ -9,6 +9,7 @@ public class InspectionManager : MonoBehaviour
     ItemObject stachedItem;
 
     public static Action<ItemObject> InspectorLoaded;
+    public static Action InspectorClosed;
 
     private void Awake()
     {
@@ -38,8 +39,10 @@ public class InspectionManager : MonoBehaviour
 
     public void CloseInspector()
     {
+
         SceneManager.UnloadSceneAsync("InspectionScene");
         GameManager.Instance.ChangeState(GameState.Playing);
+        InspectorClosed?.Invoke();
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;

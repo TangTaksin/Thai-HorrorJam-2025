@@ -13,6 +13,8 @@ public class Flashlight : MonoBehaviour
     [SerializeField] private float flickerChance = 0.02f;
     [SerializeField] private float flickerDuration = 0.1f;
 
+    
+
     private bool isOn = true;
     private float baseIntensity;
     private float currentIntensity;

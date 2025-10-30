@@ -303,6 +303,12 @@ MonoBehaviour:
   itemDesciption: 'Someone left this out here.
 
     It even have some power left!'
+  OnInspectorOpen:
+    m_PersistentCalls:
+      m_Calls: []
+  OnInspectorClose:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &411834752
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -311,22 +317,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1624924940674117196, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3773585622249064787, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4201375226398796645, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 6170471823342282612, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
+    - target: {fileID: 4879216950748651069, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
+      propertyPath: crosshairController
+      value: 
+      objectReference: {fileID: 116110916}
     - target: {fileID: 6203486935779666522, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -367,56 +365,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7316923102811559390, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8848802276516627333, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
-      propertyPath: m_CullingMask.m_Bits
-      value: 983
-      objectReference: {fileID: 0}
-    - target: {fileID: 9102565745728183886, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 6203486935779666522, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 829778090}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4201375226398796645, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
-      insertIndex: 1
-      addedObject: {fileID: 1344368570}
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
---- !u!114 &411834753 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 9128354485733897383, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
-  m_PrefabInstance: {fileID: 411834752}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d957963993a7294c984a5536d0cc487, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FPCameraController
---- !u!114 &411834754 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3234110158824913181, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
-  m_PrefabInstance: {fileID: 411834752}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ea27cd53f2ec5248bb63c23e74c317d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CameraSwayTilt
---- !u!1 &411834755 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4201375226398796645, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
-  m_PrefabInstance: {fileID: 411834752}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &481567316
 GameObject:
   m_ObjectHideFlags: 0
@@ -639,55 +592,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &829778089
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 829778090}
-  - component: {fileID: 829778091}
-  m_Layer: 0
-  m_Name: Interacter
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &829778090
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 829778089}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1344368567}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &829778091
+--- !u!114 &829778091 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 4879216950748651069, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
+  m_PrefabInstance: {fileID: 411834752}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 829778089}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 88a0a1ae86694cd4d9cb3035731d2bad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FPInteract
-  maxRaycastDistance: 10
-  layerFilters:
-    serializedVersion: 2
-    m_Bits: 512
-  crosshairController: {fileID: 116110916}
 --- !u!1 &848993591
 GameObject:
   m_ObjectHideFlags: 0
@@ -1029,40 +944,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &1344368567 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6203486935779666522, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
-  m_PrefabInstance: {fileID: 411834752}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1344368569 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3651037986760496385, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
   m_PrefabInstance: {fileID: 411834752}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 411834755}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6a54780ad00a09441804b85afdfcd6e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FPSController
---- !u!114 &1344368570
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 411834755}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96bafd42de2a77f4dbf6bd6e75cc61f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerManager
-  fPplayerController: {fileID: 1344368569}
-  fPCameraController: {fileID: 411834753}
-  fPHeadBob: {fileID: 1944645255}
-  cameraSwayTilt: {fileID: 411834754}
-  fPInteracter: {fileID: 829778091}
-  fPCameraFlashlight: {fileID: 1929983351}
 --- !u!1001 &1534433431
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2052,28 +1944,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1929983351 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3779508635517320529, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
-  m_PrefabInstance: {fileID: 411834752}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e91c0438da6852940b6a44b6a54f5508, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FPCameraFlashlight
---- !u!114 &1944645255 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6170471823342282612, guid: 86b891f96015b474c9e597ae54dee7f2, type: 3}
-  m_PrefabInstance: {fileID: 411834752}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de5ae8d74f731eb43af2898e126fc7be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FPSHeadBob
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
