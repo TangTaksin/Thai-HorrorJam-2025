@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 
 public class FPInteract : MonoBehaviour
 {
+    public static FPInteract Instance { get; private set; }
     [Header("Core Settings")]
     [Tooltip("ระยะยิง Raycast สูงสุด (ไกลที่สุดเท่าที่เป็นไปได้)")]
     [SerializeField] private float maxRaycastDistance = 10f;

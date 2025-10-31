@@ -36,7 +36,12 @@ public class ItemObject : MonoBehaviour, IInteractable
 
     public virtual void Interact(GameObject interacter)
     {
-        if (!canInspect) return;
+        if (!canInspect)
+        {
+            // --- 1. เรียกใช้ Feedback ---
+            PointerInfoDisplay.Instance?.ShowTemporaryFeedback("Need Fuel", 1.5f);
+            return;
+        }
         // --- NEW ---
         // 2. ถ้ากำลังตรวจสอบอยู่ (isInspecting = true) ให้ออกจากฟังก์ชันทันที
         // นี่คือตัวป้องกันการกดรัว (Spam Guard)
@@ -76,7 +81,7 @@ public class ItemObject : MonoBehaviour, IInteractable
         if (playerInput != null)
         {
             playerInput.ActivateInput(); // เปิด Input
-            playerInput = null; 
+            playerInput = null;
         }
 
         // --- NEW ---
