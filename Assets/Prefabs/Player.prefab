@@ -121,55 +121,6 @@ Transform:
   - {fileID: 479585692081257618}
   m_Father: {fileID: 6203486935779666522}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &3736281842446904554
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 746253050370034141}
-  - component: {fileID: 8609322884407081717}
-  m_Layer: 0
-  m_Name: Interacter
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &746253050370034141
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3736281842446904554}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8823813454673112248}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8609322884407081717
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3736281842446904554}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88a0a1ae86694cd4d9cb3035731d2bad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FPInteract
-  maxRaycastDistance: 10
-  layerFilters:
-    serializedVersion: 2
-    m_Bits: 768
-  crosshairController: {fileID: 0}
 --- !u!1 &4201375226398796645
 GameObject:
   m_ObjectHideFlags: 0
@@ -650,7 +601,7 @@ Transform:
   m_GameObject: {fileID: 6621121790788060529}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.5, z: 0}
+  m_LocalPosition: {x: 0, y: -0.93, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -671,8 +622,9 @@ MonoBehaviour:
   maxRaycastDistance: 10
   layerFilters:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 768
   crosshairController: {fileID: 0}
+  interactSound: {fileID: 11400000, guid: 271bcff035b49754ca1455bfa174bf70, type: 2}
 --- !u!1 &7148897196232021093
 GameObject:
   m_ObjectHideFlags: 0
@@ -1063,7 +1015,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3411365642880244740}
-  - {fileID: 746253050370034141}
   m_Father: {fileID: 6203486935779666522}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9008000581178230078
@@ -1083,7 +1034,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &479585692081257618
 Transform:
   m_ObjectHideFlags: 0
@@ -1136,7 +1087,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Flashlight
   flashlight: {fileID: 4064832187906143204}
   minIntensity: 5
-  maxIntensity: 20
+  maxIntensity: 25
   enableFlicker: 0
   flickerChance: 0.02
   flickerDuration: 0.1
+  toggleSound: {fileID: 11400000, guid: d6ed8021f029e8d42b60cce4870dd5fc, type: 2}

@@ -16,7 +16,7 @@ public class FPInteract : MonoBehaviour
 
     [SerializeField] private AudioEvent interactSound;
 
-    public IInteractable DetectedInteractable 
+    public IInteractable DetectedInteractable
     {
         get;
         private set;
@@ -29,6 +29,7 @@ public class FPInteract : MonoBehaviour
 
     private Transform _cam_transform;
     private PlayerControls controls;
+    private IInteractable _previouslyDetectedInteractable;
 
     public static Action<IInteractable> OnDetectedInteractableChanged;
 
@@ -51,12 +52,13 @@ public class FPInteract : MonoBehaviour
         FindInteractable();
 
         HandlePainting();
-        HandleEraser();
+        // HandleEraser();
     }
 
     void FindInteractable()
     {
-        DetectedInteractable = null;
+        // ใช้ตัวแปร 'local' ชั่วคราวเก็บค่าที่เจอในเฟรมนี้
+        IInteractable newlyDetectedInteractable = null;
         hasHitInfo = false;
 
         if (crosshairController == null) return;
@@ -67,20 +69,33 @@ public class FPInteract : MonoBehaviour
         {
             hasHitInfo = true;
             int objectLayer = currentHitInfo.collider.gameObject.layer;
-
             CrosshairLayerSetting setting = crosshairController.GetSettingForLayer(objectLayer);
 
             if (setting != null && currentHitInfo.distance <= setting.maxDistance)
             {
                 if (currentHitInfo.collider.TryGetComponent<IInteractable>(out var interactable))
                 {
-                    DetectedInteractable = interactable;
-                    
+                    // เราเจอของ
+                    newlyDetectedInteractable = interactable;
                 }
             }
         }
-        
-        OnDetectedInteractableChanged?.Invoke(DetectedInteractable);
+
+        // --- นี่คือส่วนสำคัญที่แก้ไข ---
+
+        // 1. อัปเดต Property หลัก (เพื่อให้ HandlePainting/Eraser ทำงานได้)
+        DetectedInteractable = newlyDetectedInteractable;
+
+        // 2. เช็คว่าของที่เจอ "ตอนนี้" (DetectedInteractable) 
+        //    ต่างจากของที่เจอ "เฟรมที่แล้ว" (_previouslyDetectedInteractable) หรือไม่
+        if (DetectedInteractable != _previouslyDetectedInteractable)
+        {
+            // 3. ถ้า "ต่าง" ค่อยยิง Event บอก UI
+            OnDetectedInteractableChanged?.Invoke(DetectedInteractable);
+
+            // 4. "จำ" ของที่เจอในเฟรมนี้ไว้ เพื่อใช้เทียบในเฟรมหน้า
+            _previouslyDetectedInteractable = DetectedInteractable;
+        }
     }
 
     void Interact(InputAction.CallbackContext context)
@@ -114,38 +129,38 @@ public class FPInteract : MonoBehaviour
         lastPainter = currentPainter;
     }
 
-    void HandleEraser()
-    {
-        // --- สันนิษฐานว่าคุณมี Input Action ใหม่ชื่อ "Erase" ---
-        // (ถ้าคุณยังไม่ได้สร้าง ให้ไปที่ PlayerControls asset
-        // แล้วสร้าง Action ใหม่ ตั้งชื่อว่า "Erase" 
-        // แล้ว bind เข้ากับปุ่ม เช่น Right Mouse Button)
+    // void HandleEraser()
+    // {
+    //     // --- สันนิษฐานว่าคุณมี Input Action ใหม่ชื่อ "Erase" ---
+    //     // (ถ้าคุณยังไม่ได้สร้าง ให้ไปที่ PlayerControls asset
+    //     // แล้วสร้าง Action ใหม่ ตั้งชื่อว่า "Erase" 
+    //     // แล้ว bind เข้ากับปุ่ม เช่น Right Mouse Button)
 
-        bool isErasing = controls.Player.Draw.IsPressed();
-        TextureEraser currentEraser = null;
+    //     bool isErasing = controls.Player.Draw.IsPressed();
+    //     TextureEraser currentEraser = null;
 
-        if (isErasing && DetectedInteractable != null && hasHitInfo)
-        {
-            // ตรวจสอบว่า Object ที่เราเล็งอยู่คือ "TextureEraser" หรือไม่
-            if (DetectedInteractable is TextureEraser eraser)
-            {
-                // ถ้าใช่ ให้สั่งลบโดยใช้ UV ที่ได้จาก Raycast
-                // (*** อย่าลืม! Object ที่ลบต้องใช้ MeshCollider ***)
-                eraser.ExternalPaint(currentHitInfo.textureCoord);
-                currentEraser = eraser;
-            }
-        }
+    //     if (isErasing && DetectedInteractable != null && hasHitInfo)
+    //     {
+    //         // ตรวจสอบว่า Object ที่เราเล็งอยู่คือ "TextureEraser" หรือไม่
+    //         if (DetectedInteractable is TextureEraser eraser)
+    //         {
+    //             // ถ้าใช่ ให้สั่งลบโดยใช้ UV ที่ได้จาก Raycast
+    //             // (*** อย่าลืม! Object ที่ลบต้องใช้ MeshCollider ***)
+    //             eraser.ExternalPaint(currentHitInfo.textureCoord);
+    //             currentEraser = eraser;
+    //         }
+    //     }
 
-        // ลอจิกสำคัญ: ถ้าเราหยุดกด "ลบ" หรือหันไปเล็ง Object อื่น
-        // ให้สั่ง "ยางลบอันเก่า" หยุดทำงาน (เพื่อไม่ให้เส้นลากต่อกัน)
-        if (lastEraser != null && lastEraser != currentEraser)
-        {
-            // เรียกใช้ StopPainting() บน TextureEraser
-            lastEraser.StopPainting();
-        }
+    //     // ลอจิกสำคัญ: ถ้าเราหยุดกด "ลบ" หรือหันไปเล็ง Object อื่น
+    //     // ให้สั่ง "ยางลบอันเก่า" หยุดทำงาน (เพื่อไม่ให้เส้นลากต่อกัน)
+    //     if (lastEraser != null && lastEraser != currentEraser)
+    //     {
+    //         // เรียกใช้ StopPainting() บน TextureEraser
+    //         lastEraser.StopPainting();
+    //     }
 
-        lastEraser = currentEraser;
-    }
+    //     lastEraser = currentEraser;
+    // }
 
 
     public GameObject GetDetectedObject()

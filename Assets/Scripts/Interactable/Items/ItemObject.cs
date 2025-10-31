@@ -36,6 +36,7 @@ public class ItemObject : MonoBehaviour, IInteractable
 
     public virtual void Interact(GameObject interacter)
     {
+        if (!canInspect) return;
         // --- NEW ---
         // 2. ถ้ากำลังตรวจสอบอยู่ (isInspecting = true) ให้ออกจากฟังก์ชันทันที
         // นี่คือตัวป้องกันการกดรัว (Spam Guard)

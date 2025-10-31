@@ -28,7 +28,8 @@ public class PointerInfoDisplay : MonoBehaviour
         var isntNull = itemObj != null;
 
         if (isntNull)
-            pointerTxt.text = itemObj.itemDisplayName;
+            // เพิ่ม "[ F ] " เข้าไปข้างหน้าชื่อไอเทม
+            pointerTxt.text = $"[ F ] {itemObj.itemDisplayName}"; // <--- แก้บรรทัดนี้
         else
             pointerTxt.text = string.Empty;
     }
