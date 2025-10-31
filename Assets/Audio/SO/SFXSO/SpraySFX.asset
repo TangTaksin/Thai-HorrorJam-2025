@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SpraySFX
   m_EditorClassIdentifier: Assembly-CSharp::AudioEvent
   clip: {fileID: 8300000, guid: 7e6f0685a3fae9a4ea6952e2a2c046bf, type: 3}
-  volume: 0.647
+  volume: 1
   pitch: 1
   loop: 0

@@ -22,6 +22,7 @@ public class Flashlight : MonoBehaviour
     private float flickerTimer;
 
     private PlayerControls controls;
+    [SerializeField] AudioEvent toggleSound;
 
     private void Awake()
     {
@@ -52,6 +53,7 @@ public class Flashlight : MonoBehaviour
     {
         isOn = !isOn;
         flashlight.enabled = isOn;
+        SOAudioManager.Instance?.PlaySFX(toggleSound);
     }
 
     private void HandleFlicker()

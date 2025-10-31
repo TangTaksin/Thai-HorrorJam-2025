@@ -14,6 +14,8 @@ public class FPInteract : MonoBehaviour
     [Tooltip("ลาก Crosshair Controller มาใส่ (เพื่อดึงค่า Settings)")]
     [SerializeField] private CrosshairController crosshairController;
 
+    [SerializeField] private AudioEvent interactSound;
+
     public IInteractable DetectedInteractable 
     {
         get;
@@ -86,6 +88,7 @@ public class FPInteract : MonoBehaviour
         if (DetectedInteractable != null)
         {
             DetectedInteractable.Interact(this.gameObject);
+            SOAudioManager.Instance?.PlaySFX(interactSound);
         }
     }
 
