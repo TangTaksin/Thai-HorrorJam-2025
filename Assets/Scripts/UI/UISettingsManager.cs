@@ -338,7 +338,7 @@ public class UISettingsManager : MonoBehaviour
 
         cameraBobToggle.isOn = PlayerPrefs.GetInt("CameraBob", 1) == 1;
         cameraSmoothToggle.isOn = PlayerPrefs.GetInt("CameraSmooth", 1) == 1;
-        jumpScareToggle.isOn = PlayerPrefs.GetInt("JumpScare", 1) == 1;
+        jumpScareToggle.isOn = PlayerPrefs.GetInt("JumpScare", 0) == 1;
 
         lookSensitivitySlider.value = PlayerPrefs.GetFloat("LookSensitivity", 0.5f);
 
@@ -385,14 +385,15 @@ public class UISettingsManager : MonoBehaviour
 
         lookSensitivitySlider.value = 0.5f;
 
-        SetMasterVolume(50);
-        SetMusicVolume(50);
-        SetAmbientVolume(50);
-        SetSFXVolume(50);
+        // SetMasterVolume(50);
+        // SetMusicVolume(50);
+        // SetAmbientVolume(50);
+        // SetSFXVolume(50);
 
-        Screen.fullScreen = false;
+        // Screen.fullScreen = false;
 
         Debug.Log("🔁 Settings reset to default values.");
+        ApplySettings();
     }
 
     private void ShowSavedMessage()

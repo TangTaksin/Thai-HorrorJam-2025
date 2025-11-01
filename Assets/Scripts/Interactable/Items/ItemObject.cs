@@ -22,6 +22,7 @@ public class ItemObject : MonoBehaviour, IInteractable
     // 1. เพิ่มตัวแปรสถานะเพื่อป้องกันการกดรัว
     private bool isInspecting = false;
     // --- END NEW ---
+    public bool hasFuel;
 
     private void Start()
     {
@@ -34,12 +35,23 @@ public class ItemObject : MonoBehaviour, IInteractable
         return (meshFilter, meshRenderer);
     }
 
+    public void Sethasfuel()
+    {
+        hasFuel = true;
+    }
+
     public virtual void Interact(GameObject interacter)
     {
-        if (!canInspect)
+        if (!canInspect && !hasFuel)
         {
             // --- 1. เรียกใช้ Feedback ---
             PointerInfoDisplay.Instance?.ShowTemporaryFeedback("Need Fuel", 1.5f);
+            return;
+        }
+        else if (!canInspect && hasFuel)
+        {
+            // --- 1. เรียกใช้ Feedback ---
+            // PointerInfoDisplay.Instance?.ShowTemporaryFeedback("Cannot Inspect", 1.5f);
             return;
         }
         // --- NEW ---
